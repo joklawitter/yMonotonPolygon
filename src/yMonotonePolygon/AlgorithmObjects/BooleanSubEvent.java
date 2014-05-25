@@ -1,4 +1,4 @@
-package yMonotonPolygon.AlgorithmObjects;
+package yMonotonePolygon.AlgorithmObjects;
 
 public class BooleanSubEvent extends SubEvent {
 
@@ -9,11 +9,14 @@ public class BooleanSubEvent extends SubEvent {
 		this.whyIAmExisting = outcome;
 	}
 	
-	
 	public boolean isBooleanEvent() {
 		return true;
 	}
 	
+	/**
+	 * Returns the outcome of this boolean SubEvent.
+	 * @return  the outcome of this boolean SubEvent.
+	 */
 	public boolean getBooleanEventOutcome() {
 		return whyIAmExisting;
 	}

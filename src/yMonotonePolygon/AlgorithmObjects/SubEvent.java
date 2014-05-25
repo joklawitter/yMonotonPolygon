@@ -1,4 +1,4 @@
-package yMonotonPolygon.AlgorithmObjects;
+package yMonotonePolygon.AlgorithmObjects;
 
 public abstract class SubEvent {
 	/**

@@ -1,4 +1,4 @@
-package yMonotonPolygon;
+package yMonotonePolygon;
 
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-import yMonotonPolygon.GUI.PolygonDrawPanel;
-import yMonotonPolygon.Tests.TestHelper;
+import yMonotonePolygon.GUI.PolygonDrawPanel;
+import yMonotonePolygon.Tests.TestHelper;
 
 
 public class YMonotonPolygonGUI extends JFrame {

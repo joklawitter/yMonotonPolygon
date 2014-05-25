@@ -1,9 +1,9 @@
-package yMonotonPolygon.Tests;
+package yMonotonePolygon.Tests;
 
 import java.awt.Polygon;
 import java.io.IOException;
 
-import yMonotonPolygon.InputReading.FileInputReader;
+import yMonotonePolygon.InputReading.FileInputReader;
 
 public class TestHelper {
 

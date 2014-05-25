@@ -1,4 +1,4 @@
-package yMonotonPolygon.GUI;
+package yMonotonePolygon.GUI;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -9,7 +9,8 @@ import javax.swing.JPanel;
 
 
 
-import yMonotonPolygon.AlgorithmObjects.SweepLineEvent;
+
+import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
 
 
 public class PolygonDrawPanel extends JPanel {

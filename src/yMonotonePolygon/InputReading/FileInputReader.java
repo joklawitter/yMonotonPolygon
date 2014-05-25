@@ -1,4 +1,4 @@
-package yMonotonPolygon.InputReading;
+package yMonotonePolygon.InputReading;
 
 import java.awt.Polygon;
 import java.io.BufferedReader;
