@@ -12,7 +12,7 @@ public class SweepLineEvent {
 	
 	// second, update binary search tree & the corresponding edge-helper-pairs
 	private SearchTree tree;
-	private TreeSet<Edge> aktiveEdges;
+	private TreeSet<Edge> activeEdges;
 	
 	// third , display correct method
 	private Vertex vertex;
@@ -20,10 +20,12 @@ public class SweepLineEvent {
 	// 4th, the sub-events of this event
 	private LinkedList<SubEvent> subEvents;	
 	
-	public SweepLineEvent(Vertex v, int numberOfDiagonals, int numberOfHandledVertices) {
+	public SweepLineEvent(Vertex v, int numberOfDiagonals, int numberOfHandledVertices, SearchTree searchTree, TreeSet<Edge> aktiveEdges) {
 		this.vertex = v;
 		this.numberOfDiagonals = numberOfDiagonals;
 		this.numberOfHandledVertices = numberOfHandledVertices;
+		this.tree = searchTree;
+		this.activeEdges = aktiveEdges;
 	}
 	
 	public Vertex getVertex() {
@@ -44,6 +46,18 @@ public class SweepLineEvent {
 	
 	public int getYOfSweepLine() {
 		return vertex.getY();
+	}
+		
+	public int getNumberOfDiagonals() {
+		return numberOfDiagonals;
+	}
+	
+	public SearchTree getTree() {
+		return tree;
+	}
+
+	public TreeSet<Edge> getActiveEdges() {
+		return activeEdges;
 	}
 	
 	public LinkedList<SubEvent> getSubEvents() {

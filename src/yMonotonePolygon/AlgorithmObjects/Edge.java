@@ -22,6 +22,14 @@ public class Edge {
 		this.end = end;
 	}
 
+	public static Edge diagonalFactory(Vertex start, Vertex end) {
+		Edge e = new Edge(start, end);
+		e.setColor(GUIColorConfiguration.DIAGONAL);
+
+		return e;
+	}
+ 
+	
 	public Vertex getHelper() {
 		return helper;
 	}

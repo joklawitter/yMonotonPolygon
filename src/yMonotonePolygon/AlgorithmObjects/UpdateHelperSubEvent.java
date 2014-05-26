@@ -19,7 +19,9 @@ public class UpdateHelperSubEvent extends SubEvent {
 	public UpdateHelperSubEvent(int methodLine, Vertex newHelper, Vertex oldHelper) {
 		this(methodLine, newHelper);
 		this.oldHelper = oldHelper;
-		this.hadHelperBefore = true;
+		if (oldHelper != null) {
+			this.hadHelperBefore = true;
+		}
 	}
 
 	public Vertex getNewHelper() {

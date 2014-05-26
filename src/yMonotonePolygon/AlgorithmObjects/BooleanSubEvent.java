@@ -8,11 +8,7 @@ public class BooleanSubEvent extends SubEvent {
 		super(methodLine);
 		this.whyIAmExisting = outcome;
 	}
-	
-	public boolean isBooleanEvent() {
-		return true;
-	}
-	
+		
 	/**
 	 * Returns the outcome of this boolean SubEvent.
 	 * @return  the outcome of this boolean SubEvent.

@@ -5,13 +5,16 @@ import java.awt.Polygon;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
+import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
+import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
+import yMonotonePolygon.AlgorithmObjects.SearchSubEvent;
 import yMonotonePolygon.AlgorithmObjects.SearchTree;
 import yMonotonePolygon.AlgorithmObjects.SubEvent;
 import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
+import yMonotonePolygon.AlgorithmObjects.UpdateDeletionTreeSubEvent;
 import yMonotonePolygon.AlgorithmObjects.UpdateHelperSubEvent;
 import yMonotonePolygon.AlgorithmObjects.UpdateInsertTreeSubEvent;
-import yMonotonePolygon.AlgorithmObjects.UpdateTreeSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 
@@ -38,6 +41,9 @@ public class PraeComputer {
 	
 	/** binary search tree of the active edges */
 	private SearchTree tree;
+	
+	/** active edges, those crossing the sweep line and pointing down */
+	private TreeSet<Edge> activeEdges;
 
 	public Polygon getP() {
 		return p;
@@ -55,8 +61,6 @@ public class PraeComputer {
 		return diagonals;
 	}
 
-	
-	
 	/**
 	 * Does the prae-computation. 
 	 * Includes computing the whole history and diagonals to add.
@@ -85,6 +89,7 @@ public class PraeComputer {
 		tree = new SearchTree();
 		diagonals = new LinkedList<Edge>();
 		history = new LinkedList<SweepLineEvent>();
+		activeEdges = new TreeSet<Edge>();
 		
 		
 		// sort vertices y-x-lexicographical
@@ -102,43 +107,265 @@ public class PraeComputer {
 		return false;
 	}
 
-
 	private void handleVertexEvent(Vertex v) {
 		SweepLineEvent event = null;
 		
 		if (v.isStartVertex()) {
 			event = handleStartVertex(v);
+		} else if (v.isEndVertex()) {
+			event = handleEndVertex(v);
+		} else if (v.isSplitVertex()) {
+			event = handleSplitVertex(v);
+		} else if (v.isMergeVertex()) {
+			event = handleMergeVertex(v);
+		} else if (v.isRegularRightVertex()) {
+			event = handleRegularRightVertex(v);
+		} else if (v.isRegularLeftVertex()) {
+			event = handleRegularLeftVertex(v);
 		} 
 		
-		// TODO
 		history.add(event);	
 	}
 
 	private SweepLineEvent handleStartVertex(Vertex v) {
 		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+		Edge nextEdge = v.getNextEdge();
 		
 		// line 1: insert edge in SearchTree
-		tree.insert(v.getNextEdge(), v.getY());
-		v.getNextEdge().setColor(getNextColor());
-		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(1, tree.clone(), v.getNextEdge().clone());
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 1);
+		subEvents.add(treeUpdate);
 		
 		// line 2: set v as helper
-		v.getNextEdge().setHelper(v);
-		UpdateHelperSubEvent helperUpdate = new UpdateHelperSubEvent(2, v.clone());
-		
-		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
-		subEvents.add(treeUpdate);
+		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 2);
 		subEvents.add(helperUpdate);
-		event.setSubEvents(subEvents);
 		
+		event.setSubEvents(subEvents);
 		history.add(event);
 		
 		return event;
 	}
 
-	private SweepLineEvent initSweepLineEvent(Vertex v) {
-		return new SweepLineEvent(v, diagonals.size(), handledVertices);
+	private SweepLineEvent handleEndVertex(Vertex v) {
+		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+		Edge prevEdge = v.getPrevEdge();
+		
+		// line 1: if helper is merge vertex
+		assert (prevEdge.getHelper() != null);
+		boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+		BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
+		subEvents.add(boolEvent);
+		
+		// then line 2: insert diagonal v-helper 
+		if (helperIsMerge) {
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
+			subEvents.add(addDiagonalEvent);
+		}
+		
+		// line 3: delete prevEdge from tree
+		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
+		subEvents.add(deletionEvent);		
+		
+		event.setSubEvents(subEvents);
+		history.add(event);
+		
+		return event;
+	} 
+	
+	private SweepLineEvent handleSplitVertex(Vertex v) {
+		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+		
+		// line 1: search in tree to find edge left of v
+		Edge leftOfVEdge = tree.searchEdge(v);
+		assert (leftOfVEdge != null);
+		SearchSubEvent searchEvent = new SearchSubEvent(1, leftOfVEdge);
+		subEvents.add(searchEvent);		
+		
+		// line 2: add diagonal to helper of found edge and split vertex v
+		AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 2);
+		subEvents.add(addDiagonalEvent);
+		
+		// line 3: update helper - v is now helper
+		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 3);
+		subEvents.add(helperUpdate);
+		
+		// line 4: insert next edge of v in t
+		Edge nextEdge = v.getNextEdge();
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 4);
+		subEvents.add(treeUpdate);
+		
+		// line 5: set v as helper of this edge
+		UpdateHelperSubEvent helperUpdate2 = updateHelper(nextEdge, v, 5);
+		subEvents.add(helperUpdate2);
+		
+		event.setSubEvents(subEvents);
+		history.add(event);
+		
+		return event;
 	}
+
+	private SweepLineEvent handleMergeVertex(Vertex v) {
+		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+		Edge prevEdge = v.getPrevEdge();
+		
+		// line 1: if helper of edge right of v is merge vertex
+		boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+		BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
+		subEvents.add(boolEvent);
+		
+		// then line 2: insert diagonal v-helper 
+		if (helperIsMerge) {
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
+			subEvents.add(addDiagonalEvent);
+		}
+		
+		// line 3: delete prevEdge from tree
+		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
+		subEvents.add(deletionEvent);	
+		
+		// line 4: search in tree to find edge left of v
+		Edge leftOfVEdge = tree.searchEdge(v);
+		SearchSubEvent searchEvent = new SearchSubEvent(4, leftOfVEdge);
+		subEvents.add(searchEvent);
+		
+		// line 5: if helper of edge left of v is merge vertex
+		boolean helperIsMerge2 = leftOfVEdge.getHelper().isMergeVertex();
+		BooleanSubEvent boolEvent2 = new BooleanSubEvent(5, helperIsMerge2);
+		subEvents.add(boolEvent2);
+		
+		// then line 6: insert diagonal v-helper 
+		if (helperIsMerge2) {
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 6);
+			subEvents.add(addDiagonalEvent);
+		}
+		
+		// line 7: set v as helper of this edge
+		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 7);
+		subEvents.add(helperUpdate);
+		
+		
+		event.setSubEvents(subEvents);
+		history.add(event);
+		
+		return event;
+	}
+
+	private SweepLineEvent handleRegularLeftVertex(Vertex v) {
+		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+				
+		// line 1: boolean event is true, we are on the left side
+		subEvents.add(new BooleanSubEvent(1, true));
+		
+		Edge prevEdge = v.getPrevEdge();
+		// line 2: if helper of edge before v is merge vertex
+		boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+		BooleanSubEvent boolEvent = new BooleanSubEvent(2, helperIsMerge);
+		subEvents.add(boolEvent);
+		
+		// then line 3: insert diagonal v-helper 
+		if (helperIsMerge) {
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 3);
+			subEvents.add(addDiagonalEvent);
+		}
+		
+		// line 4: delete prevEdge from tree
+		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 4);
+		subEvents.add(deletionEvent);	
+		
+		Edge nextEdge = v.getNextEdge();
+		// line 5: insert edge in SearchTree
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 5);
+		subEvents.add(treeUpdate);
+		
+		// line 6: set v as helper
+		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 6);
+		subEvents.add(helperUpdate);
+		
+		event.setSubEvents(subEvents);
+		history.add(event);
+		
+		return event;
+	}
+
+	private SweepLineEvent handleRegularRightVertex(Vertex v) {
+		SweepLineEvent event = initSweepLineEvent(v); 
+		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+				
+		// line 1: boolean event is false, we are on the right side
+		subEvents.add(new BooleanSubEvent(1, false));
+		
+		// line 7: search in tree to find edge left of v
+		Edge leftOfVEdge = tree.searchEdge(v);
+		SearchSubEvent searchEvent = new SearchSubEvent(7, leftOfVEdge);
+		subEvents.add(searchEvent);
+		
+		// line 8: if helper of edge left of v is merge vertex
+		boolean helperIsMerge = leftOfVEdge.getHelper().isMergeVertex();
+		BooleanSubEvent boolEvent = new BooleanSubEvent(8, helperIsMerge);
+		subEvents.add(boolEvent);
+		
+		// then line 9: insert diagonal v-helper 
+		if (helperIsMerge) {
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 9);
+			subEvents.add(addDiagonalEvent);
+		}
+		
+		// line 10: set v as helper of this edge
+		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 10);
+		subEvents.add(helperUpdate);
+		
+		event.setSubEvents(subEvents);
+		history.add(event);
+		
+		return event;
+	}
+	
+	private SweepLineEvent initSweepLineEvent(Vertex v) {
+		return new SweepLineEvent(v, diagonals.size(), handledVertices, tree.clone(), cloneHelper(activeEdges));
+	}
+
+	private AddDiagonalSubEvent addDiagonal(Vertex v, Edge edge, int methodline) {
+		Edge newDiagonal = Edge.diagonalFactory(v, edge.getHelper());
+		diagonals.add(newDiagonal);
+		AddDiagonalSubEvent addDiagonalEvent = new AddDiagonalSubEvent(2, newDiagonal);
+		return addDiagonalEvent;
+	}
+	
+	private UpdateDeletionTreeSubEvent deleteEdgeFromTree(Edge toDelete, int methodline) {
+		tree.delete(toDelete);
+		activeEdges.remove(toDelete);
+		UpdateDeletionTreeSubEvent deletionEvent = 
+				new UpdateDeletionTreeSubEvent(methodline, tree.clone(), toDelete, toDelete.getHelper());
+		return deletionEvent;
+	}
+	
+	private UpdateInsertTreeSubEvent insertEdgeInTree(Edge toInsert, Vertex v, int methodline) {
+		tree.insert(toInsert, v.getY());
+		activeEdges.add(toInsert);
+		toInsert.setColor(getNextColor());
+		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(methodline, tree.clone(), toInsert.clone());
+		return treeUpdate;
+	}
+	
+	private UpdateHelperSubEvent updateHelper(Edge edge, Vertex newHelper, int methodline) {
+		Vertex oldHelper = edge.getHelper();
+		edge.setHelper(newHelper);
+		UpdateHelperSubEvent helperUpdate = new UpdateHelperSubEvent(2, newHelper.clone(), oldHelper);
+		return helperUpdate;
+	}
+	
+	private TreeSet<Edge> cloneHelper(TreeSet<Edge> toClone) {
+		TreeSet<Edge> cloned = new TreeSet<Edge>();
+		for (Edge e : toClone) {
+			cloned.add(e.clone());
+		}
+		return cloned;
+	}
+
 
 	/**
 	 * Returns a new color for a edge-helper pair.

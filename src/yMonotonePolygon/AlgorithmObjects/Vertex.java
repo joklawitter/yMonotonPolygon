@@ -137,9 +137,6 @@ public class Vertex implements Comparable<Vertex> {
 		this.helping = false;
 	}
 	
-
-	
-	
 	@Override
 	public int compareTo(Vertex other) {
 		return (Geometry.isLowerThan(other, this)) ? -1 : 1;

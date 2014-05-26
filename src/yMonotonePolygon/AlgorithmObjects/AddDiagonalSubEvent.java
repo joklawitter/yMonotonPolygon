@@ -9,4 +9,7 @@ public class AddDiagonalSubEvent extends SubEvent{
 		this.diagonal = diagonal;
 	}
 
+	public Edge getDiagonal() {
+		return diagonal;
+	}
 }

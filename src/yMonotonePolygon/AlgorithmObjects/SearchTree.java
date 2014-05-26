@@ -51,7 +51,11 @@ public class SearchTree {
    }
 
    // searching at position x for the next edge to the left
-   public Edge searchEdgeAtX(int x, int y) {
+   public Edge searchEdge(Vertex v) {
+		return searchEdgeAtX(v.getX(), v.getY());
+	} 
+   
+   private Edge searchEdgeAtX(int x, int y) {
       return searchEdgeAtX(root, x, y);
    }
    
@@ -226,6 +230,8 @@ public class SearchTree {
       public void setData(Edge e) {
     	  this.e = e;
       }
-   } 
+   }
+
+
 }
 
