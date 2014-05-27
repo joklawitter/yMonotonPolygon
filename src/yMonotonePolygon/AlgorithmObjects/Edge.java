@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 
-public class Edge {
+public class Edge implements Comparable<Edge> {
 
 	private Vertex start;
 	private Vertex end;
@@ -29,20 +29,30 @@ public class Edge {
 		return e;
 	}
  
-	
 	public Vertex getHelper() {
 		return helper;
 	}
 
 	public void setHelper(Vertex helper) {
-		if (getHelper() == null) {
-			getHelper().setNotHelping();
-		}
+		releaseHelper();
 		this.helper = helper;
 		helper.setHelpedEdge(this);
 	}
 
 
+	/**
+	 * Releases a vertex of duty as helper. 
+	 * @return the vertex released from helping
+	 */
+	public Vertex releaseHelper() {
+		Vertex oldHelper = getHelper();
+		if (oldHelper != null) {
+			oldHelper.setNotHelping();
+		}
+		return oldHelper;
+	}
+
+		
 	public Color getColor() {
 		return color;
 	}
@@ -62,7 +72,29 @@ public class Edge {
 	public Edge clone() {
 		Edge cloned = new Edge(getStartVertex(), getEndVertex());
 		cloned.setColor(this.getColor());
-		cloned.setHelper(this.getHelper().clone());
+		if (getHelper() != null) {			
+			cloned.setHelper(this.getHelper().clone());
+		}
 		return cloned;
 	}
+
+	@Override
+	public String toString() {
+		String s = "Edge [start=" + start + ", end=" + end + ", color=" + color;
+		if (helper != null) {
+			s += ", helper=" + helper + "]";
+		}
+		s += "]";
+		return s;
+	}
+
+	
+	@Override
+	public int compareTo(Edge o) {
+		return Integer.compare(this.getStartVertex().getX(), o.getStartVertex().getX());
+	}
+
+
+	
+	
 }

@@ -24,11 +24,15 @@ public class SearchTree {
       return compareAtY(one.getData(), two.getData(), y);
    }*/
    private int compareAtY(Edge one, Edge two, int y) {
-	   return Integer.compare(Geometry.computeXOfEdgeAtY(one, y), 
+	   return Double.compare(Geometry.computeXOfEdgeAtY(one, y), 
 				 			  Geometry.computeXOfEdgeAtY(two, y)); 
    }
 
    // insert
+   public void insert(Edge data) {
+	      root = insert(root, data, data.getStartVertex().getY());
+	   }
+   
    public void insert(Edge data, int y) {
       root = insert(root, data, y);
    }
@@ -64,6 +68,8 @@ public class SearchTree {
     	  return null;
       }
 	  
+      //System.out.println("y = " + y + ", x = " + x + ", x of edge = " + Geometry.computeXOfEdgeAtY(p.getData(), y));
+      
       // this node to much to the right?
 	  if (Geometry.computeXOfEdgeAtY(p.getData(), y) > x) { // x lies to the left of this node
     	  return searchEdgeAtX(p.left, x, y);
@@ -109,12 +115,15 @@ public class SearchTree {
 		 	        p.right =  delete(p.right, p.getData(), y) ;
 	        	 }
 	         }
+		  
+		  return p;
 	  }
 	  
       if (compareAtY(toDelete, p.getData(), y) < 0) {
     	  p.left = delete(p.left, toDelete, y);
       } else if (compareAtY(toDelete, p.getData(), y)  > 0) { 	  
     	  p.right = delete(p.right, toDelete, y);
+    	  Double.compare(y, y);
       } 
       
       return p;
@@ -193,7 +202,7 @@ public class SearchTree {
    }
    
    // returns the number of nodes on a given level
-   public int width(Node p, int depth) {
+   private int width(Node p, int depth) {
       if (p==null) {
     	  return 0;
       } else if (depth == 0) {

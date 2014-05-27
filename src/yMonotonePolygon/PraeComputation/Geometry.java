@@ -27,13 +27,12 @@ public class Geometry {
 	}
 
 	public static boolean liesLeftOfLine(Edge e, Vertex v) {
-		// normal vektor to e
 		int eX = (e.getEndVertex().getX() - e.getStartVertex().getX());
 		int eY = (e.getEndVertex().getY() - e.getStartVertex().getY());
 		int mX = (v.getX() - e.getStartVertex().getX());
 		int mY = (v.getY() - e.getStartVertex().getY());
 		
-		return (((eX * mY) - (eY * mX)) > 0);
+		return (((eX * mY) - (eY * mX)) < 0);
 	}
 	
 	/**
@@ -53,13 +52,14 @@ public class Geometry {
 	}
 	
 	
-	public static int computeXOfEdgeAtY(Edge e, int y) {
+	public static double computeXOfEdgeAtY(Edge e, double y) {
 		Vertex a = e.getStartVertex();
 		Vertex b = e.getEndVertex();
-		double alpha = (y - a.getY()) / (b.getY() - a.getY());
+		double alpha = (y - (double) a.getY()) / ((double) b.getY() - (double) a.getY());
 		if ((alpha > 1) || (alpha < 0)) {
 			throw new AssertionError("Does not lie in y-interval of edge.");
 		}
-		return (int) (a.getX() + alpha * (b.getX() - a.getX()));
+		//System.out.println("y = " + y + ", alpha = " + alpha);
+		return (a.getX() + alpha * (b.getX() - a.getX()));
 	}
 }

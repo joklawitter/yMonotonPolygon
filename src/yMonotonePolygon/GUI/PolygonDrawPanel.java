@@ -3,6 +3,7 @@ package yMonotonePolygon.GUI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -10,7 +11,11 @@ import javax.swing.JPanel;
 
 
 
+
+
+import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
+import yMonotonePolygon.PraeComputation.PraeComputer;
 
 
 public class PolygonDrawPanel extends JPanel {
@@ -29,15 +34,19 @@ public class PolygonDrawPanel extends JPanel {
 		setSize(1600,600);
 	}
 	
-	public void paint(Polygon p, SweepLineEvent s) {
-
-	}
 	
 	public void paintComponent(Graphics g) {
 		 super.paintComponent(g);
 		 	    
 		 drawPolygon(g);
-		 drawSweepLineStatus(g);		   
+		 PraeComputer pc = new PraeComputer();
+		 pc.work(p);
+		 LinkedList<Edge> diagonals = pc.getDiagonals();
+		 g.setColor(Color.RED);
+		 for (Edge e : diagonals) {
+			 g.drawLine(e.getStartVertex().getX(), e.getStartVertex().getY(), e.getEndVertex().getX(), e.getEndVertex().getY());
+		 }
+		   
 	}
 
 
@@ -49,8 +58,5 @@ public class PolygonDrawPanel extends JPanel {
 		g.drawPolygon(p);
 	}
 	
-	private void drawSweepLineStatus(Graphics g) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

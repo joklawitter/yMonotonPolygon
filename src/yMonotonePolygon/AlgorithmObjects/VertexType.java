@@ -17,4 +17,20 @@ public enum VertexType {
 	public Method getCorrespondingMethod() {
 		return m;
 	}
+	
+	public String toString() {
+		if (this == START) {
+			return "StartVertex";
+		} else if (this == END) {
+			return "EndVertex";
+		} else if (this == SPLIT) {
+			return "SplitVertex";
+		} else if (this == MERGE) {
+			return "MergeVertex";
+		} else if (this == REGULAR_LEFT) {
+			return "RegularLeftVertex";
+		} else {
+			return "RegularRightVertex";
+		}
+	}
 }

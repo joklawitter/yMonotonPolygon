@@ -66,7 +66,6 @@ public class Vertex implements Comparable<Vertex> {
 		return this.getVertexType().getCorrespondingMethod();
 	}
 	
-	
 	public Vertex getPrev() {
 		return prev;
 	}
@@ -100,8 +99,7 @@ public class Vertex implements Comparable<Vertex> {
 		this.nextEdge = nextEdge;
 	}
 
-	
-	public void computeVertexType() { 
+	public boolean computeVertexType() { 
 		// it is ensured that we go counterclockwise through the polygon
 		if (Geometry.isLowerThan(this, this.getPrev()) && Geometry.isLowerThan(this.getNext(), this)) {  // y-monotone down
 			this.type = VertexType.REGULAR_LEFT;
@@ -120,10 +118,15 @@ public class Vertex implements Comparable<Vertex> {
 				this.type = VertexType.SPLIT;
 			}
 		} else {
-			throw new AssertionError();
+			System.out.println("VertexType could not be determined for Vertex : x=" + getX() + ", y=" + getY());
+			printNeighbours();
+			return false;
 		}
 		
+		return true;		
 	}
+
+
 
 	public void setHelpedEdge(Edge e) {
 		this.helpedEdge = e;
@@ -156,5 +159,34 @@ public class Vertex implements Comparable<Vertex> {
 		return cloned;
 	}
 
+	@Override
+	public String toString() {
+		return getVertexType().toString() + " (" + x + ", " + y +")";
+	}
+	
+	public String toShortString() {
+		return "V(" + x + ", " + y + ")";
+	}
+	
+	private void printNeighbours() {
+		if (getPrev() != null) {
+			System.out.println("Prev Vertex: " + getPrev().toShortString());
+		} else {
+			System.out.println("No previous Vertex set.");
+		}
+		
+		if (getNext() != null) {
+			System.out.println("Next Vertex: " + getNext().toShortString());
+		} else {
+			System.out.println("No next Vertex set.");
+		}
+		
+		if (getNext() != null) {
+			System.out.println("Next Vertex: " + getNext().toShortString());
+		} else {
+			System.out.println("No next Vertex set.");
+		}
+		
+	}
 
 }

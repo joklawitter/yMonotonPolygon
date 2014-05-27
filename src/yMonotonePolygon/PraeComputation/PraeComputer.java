@@ -81,8 +81,12 @@ public class PraeComputer {
 		}
 		
 		// construct own polygon and identify vertex types
-		createVertices(p);
-		computeVertexType();
+		if (!createVertices(p)) {
+			return false;
+		}
+		if (!computeVertexType()) {
+			return false;
+		}
 		
 		
 		// initialize fields
@@ -104,7 +108,9 @@ public class PraeComputer {
 		
 		assert (handledVertices == vertices.size());
 		
-		return false;
+		//System.out.println(toString());
+		
+		return true;
 	}
 
 	private void handleVertexEvent(Vertex v) {
@@ -336,15 +342,20 @@ public class PraeComputer {
 	}
 	
 	private UpdateDeletionTreeSubEvent deleteEdgeFromTree(Edge toDelete, int methodline) {
+		Vertex oldHelper = toDelete.releaseHelper();
 		tree.delete(toDelete);
 		activeEdges.remove(toDelete);
 		UpdateDeletionTreeSubEvent deletionEvent = 
-				new UpdateDeletionTreeSubEvent(methodline, tree.clone(), toDelete, toDelete.getHelper());
+				new UpdateDeletionTreeSubEvent(methodline, tree.clone(), toDelete, oldHelper);
 		return deletionEvent;
 	}
 	
 	private UpdateInsertTreeSubEvent insertEdgeInTree(Edge toInsert, Vertex v, int methodline) {
-		tree.insert(toInsert, v.getY());
+		if (toInsert == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		tree.insert(toInsert);
 		activeEdges.add(toInsert);
 		toInsert.setColor(getNextColor());
 		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(methodline, tree.clone(), toInsert.clone());
@@ -383,13 +394,15 @@ public class PraeComputer {
 		int[] yPoints = poly.ypoints;
 		
 		Vertex first = new Vertex(xPoints[0], yPoints[0]);
+		vertices.add(first);
 		Vertex current = first;
 		Vertex prev;
 		for (int i = 1; i < poly.npoints; i++) {
 			prev = current;
 			current = new Vertex(xPoints[i], yPoints[i]);
-			current.setPrev(current);
+			current.setPrev(prev);
 			prev.setNext(current);
+			vertices.add(current);
 		}
 		first.setPrev(current); // current is now last one
 		current.setNext(first);
@@ -406,10 +419,39 @@ public class PraeComputer {
 		return true;
 	}
 	
-	private void computeVertexType() {
+	private boolean computeVertexType() {
 		for (Vertex v : vertices) {
-			v.computeVertexType();
+			if (!v.computeVertexType()) {
+				return false;
+			}
 		}
+		
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "PraeComputer [vertices=" + verticesToString() + ", " 
+				+ diagonals.size() + " diagonals=" + diagonalsToString() 
+				+ ", handledVertices="+ handledVertices + "]";
+	}
+
+	private String diagonalsToString() {
+		String s = "[";
+		for (Edge e : diagonals) {
+			s += e.toString() + " | ";
+		}
+		s += "]";
+		return s;
+	}
+
+	private String verticesToString() {
+		String s = "[";
+		for (Vertex v : vertices) {
+			s += v.toShortString() + " | ";
+		}
+		s += "]";
+		return s;
 	}
 
 }

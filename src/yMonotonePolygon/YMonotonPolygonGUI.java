@@ -67,7 +67,7 @@ public class YMonotonPolygonGUI extends JFrame {
 		
 
 		polygonPanel = new PolygonDrawPanel();
-		polygonPanel.setP(TestHelper.readTestPolygon());
+		polygonPanel.setP(TestHelper.readTestPolygon("example2"));
 		//c.ipady = 600;      //make this component tall
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 0.75;
