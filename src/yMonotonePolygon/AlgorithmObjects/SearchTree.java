@@ -174,7 +174,19 @@ public class SearchTree {
       }
    }
 
-   public int countLeaves()  {
+   public int size() {
+	   return size(root);
+   }
+   
+   private int size(Node p) {
+	if (p == null) {
+		return 0;
+	}
+	
+	return 1 + size(p.left) + size(p.right);
+}
+
+public int countLeaves()  {
       return countLeaves(root);
    }
    
@@ -240,6 +252,8 @@ public class SearchTree {
     	  this.e = e;
       }
    }
+
+
 
 
 }

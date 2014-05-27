@@ -146,9 +146,7 @@ public class PraeComputer {
 		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 2);
 		subEvents.add(helperUpdate);
 		
-		event.setSubEvents(subEvents);
-		history.add(event);
-		
+		event.setSubEvents(subEvents);		
 		return event;
 	}
 
@@ -173,9 +171,7 @@ public class PraeComputer {
 		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
 		subEvents.add(deletionEvent);		
 		
-		event.setSubEvents(subEvents);
-		history.add(event);
-		
+		event.setSubEvents(subEvents);		
 		return event;
 	} 
 	
@@ -207,8 +203,6 @@ public class PraeComputer {
 		subEvents.add(helperUpdate2);
 		
 		event.setSubEvents(subEvents);
-		history.add(event);
-		
 		return event;
 	}
 
@@ -254,8 +248,6 @@ public class PraeComputer {
 		
 		
 		event.setSubEvents(subEvents);
-		history.add(event);
-		
 		return event;
 	}
 
@@ -291,9 +283,7 @@ public class PraeComputer {
 		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 6);
 		subEvents.add(helperUpdate);
 		
-		event.setSubEvents(subEvents);
-		history.add(event);
-		
+		event.setSubEvents(subEvents);	
 		return event;
 	}
 
@@ -324,9 +314,7 @@ public class PraeComputer {
 		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 10);
 		subEvents.add(helperUpdate);
 		
-		event.setSubEvents(subEvents);
-		history.add(event);
-		
+		event.setSubEvents(subEvents);	
 		return event;
 	}
 	

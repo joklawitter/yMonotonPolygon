@@ -119,8 +119,6 @@ public class TestTree {
 		tree.delete(e2);
 		assertTrue(tree.height() == 1);
 		assertTrue(tree.countLeaves() == 1);
-
-		
 	}
 
 }
