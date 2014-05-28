@@ -254,33 +254,30 @@ public class PraeComputer {
 	private SweepLineEvent handleRegularLeftVertex(Vertex v) {
 		SweepLineEvent event = initSweepLineEvent(v); 
 		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
-				
-		// line 1: boolean event is true, we are on the left side
-		subEvents.add(new BooleanSubEvent(1, true));
-		
+						
 		Edge prevEdge = v.getPrevEdge();
-		// line 2: if helper of edge before v is merge vertex
+		// line 1: if helper of edge before v is merge vertex
 		boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
-		BooleanSubEvent boolEvent = new BooleanSubEvent(2, helperIsMerge);
+		BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
 		subEvents.add(boolEvent);
 		
-		// then line 3: insert diagonal v-helper 
+		// then line 2: insert diagonal v-helper 
 		if (helperIsMerge) {
-			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 3);
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
 			subEvents.add(addDiagonalEvent);
 		}
 		
-		// line 4: delete prevEdge from tree
-		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 4);
+		// line 3: delete prevEdge from tree
+		UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
 		subEvents.add(deletionEvent);	
 		
 		Edge nextEdge = v.getNextEdge();
-		// line 5: insert edge in SearchTree
-		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 5);
+		// line 4: insert edge in SearchTree
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 4);
 		subEvents.add(treeUpdate);
 		
-		// line 6: set v as helper
-		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 6);
+		// line 5: set v as helper
+		UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 5);
 		subEvents.add(helperUpdate);
 		
 		event.setSubEvents(subEvents);	
@@ -290,28 +287,25 @@ public class PraeComputer {
 	private SweepLineEvent handleRegularRightVertex(Vertex v) {
 		SweepLineEvent event = initSweepLineEvent(v); 
 		LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
-				
-		// line 1: boolean event is false, we are on the right side
-		subEvents.add(new BooleanSubEvent(1, false));
-		
-		// line 7: search in tree to find edge left of v
+					
+		// line 1: search in tree to find edge left of v
 		Edge leftOfVEdge = tree.searchEdge(v);
-		SearchSubEvent searchEvent = new SearchSubEvent(7, leftOfVEdge);
+		SearchSubEvent searchEvent = new SearchSubEvent(1, leftOfVEdge);
 		subEvents.add(searchEvent);
 		
-		// line 8: if helper of edge left of v is merge vertex
+		// line 2: if helper of edge left of v is merge vertex
 		boolean helperIsMerge = leftOfVEdge.getHelper().isMergeVertex();
-		BooleanSubEvent boolEvent = new BooleanSubEvent(8, helperIsMerge);
+		BooleanSubEvent boolEvent = new BooleanSubEvent(2, helperIsMerge);
 		subEvents.add(boolEvent);
 		
-		// then line 9: insert diagonal v-helper 
+		// then line 3: insert diagonal v-helper 
 		if (helperIsMerge) {
-			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 9);
+			AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 3);
 			subEvents.add(addDiagonalEvent);
 		}
 		
-		// line 10: set v as helper of this edge
-		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 10);
+		// line 4: set v as helper of this edge
+		UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 4);
 		subEvents.add(helperUpdate);
 		
 		event.setSubEvents(subEvents);	
