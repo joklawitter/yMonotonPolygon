@@ -28,6 +28,11 @@ public class Vertex implements Comparable<Vertex> {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public Vertex(int x, int y, Color color) {
+		this(x, y);
+		this.color = color;
+	}
 
 	public int getX() {
 		return x;

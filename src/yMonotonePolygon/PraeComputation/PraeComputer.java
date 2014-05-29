@@ -139,7 +139,7 @@ public class PraeComputer {
 		Edge nextEdge = v.getNextEdge();
 		
 		// line 1: insert edge in SearchTree
-		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 1);
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 1);
 		subEvents.add(treeUpdate);
 		
 		// line 2: set v as helper
@@ -195,7 +195,7 @@ public class PraeComputer {
 		
 		// line 4: insert next edge of v in t
 		Edge nextEdge = v.getNextEdge();
-		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 4);
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 4);
 		subEvents.add(treeUpdate);
 		
 		// line 5: set v as helper of this edge
@@ -273,7 +273,7 @@ public class PraeComputer {
 		
 		Edge nextEdge = v.getNextEdge();
 		// line 4: insert edge in SearchTree
-		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, v, 4);
+		UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 4);
 		subEvents.add(treeUpdate);
 		
 		// line 5: set v as helper
@@ -313,7 +313,8 @@ public class PraeComputer {
 	}
 	
 	private SweepLineEvent initSweepLineEvent(Vertex v) {
-		return new SweepLineEvent(v, diagonals.size(), handledVertices, tree.clone(), cloneHelper(activeEdges));
+		return new SweepLineEvent(v, diagonals.size(), handledVertices, 
+				tree.getNodesForY(v.getY()), cloneHelper(activeEdges));
 	}
 
 	private AddDiagonalSubEvent addDiagonal(Vertex v, Edge edge, int methodline) {
@@ -328,11 +329,12 @@ public class PraeComputer {
 		tree.delete(toDelete);
 		activeEdges.remove(toDelete);
 		UpdateDeletionTreeSubEvent deletionEvent = 
-				new UpdateDeletionTreeSubEvent(methodline, tree.clone(), toDelete, oldHelper);
+				new UpdateDeletionTreeSubEvent(methodline, tree.getNodesForY(toDelete.getEndVertex().getY()), 
+						toDelete, oldHelper);
 		return deletionEvent;
 	}
 	
-	private UpdateInsertTreeSubEvent insertEdgeInTree(Edge toInsert, Vertex v, int methodline) {
+	private UpdateInsertTreeSubEvent insertEdgeInTree(Edge toInsert, int methodline) {
 		if (toInsert == null) {
 			throw new IllegalArgumentException();
 		}
@@ -340,7 +342,8 @@ public class PraeComputer {
 		tree.insert(toInsert);
 		activeEdges.add(toInsert);
 		toInsert.setColor(getNextColor());
-		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(methodline, tree.clone(), toInsert.clone());
+		UpdateInsertTreeSubEvent treeUpdate = 
+				new UpdateInsertTreeSubEvent(methodline, tree.getNodesForY(toInsert.getEndVertex().getY()), toInsert.clone());
 		return treeUpdate;
 	}
 	

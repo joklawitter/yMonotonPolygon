@@ -1,5 +1,7 @@
 package yMonotonePolygon.AlgorithmObjects;
 
+import java.util.TreeSet;
+
 import yMonotonePolygon.PraeComputation.Geometry;
 
 
@@ -28,7 +30,32 @@ public class SearchTree {
 				 			  Geometry.computeXOfEdgeAtY(two, y)); 
    }
 
-   // insert
+   /**
+    * Returns a set of vertices with x coordinate of edges
+    * in tree structure at given y, and with color of the edge.
+    * @param y coordinate at which the set shall be computed
+    * @return a set of vertices with x coordinate and color of edges in tree at y
+    */
+   public TreeSet<Vertex> getNodesForY(int y) {
+	   TreeSet<Vertex> nodes = new TreeSet<Vertex>();
+	   addNodeAtYToSet(root, nodes, y);
+	   
+	   return nodes;
+   }
+   
+   private void addNodeAtYToSet(Node p, TreeSet<Vertex> set, int y) {
+	if (p == null) {
+		return;
+	}
+	
+	Vertex v = new Vertex((int) Geometry.computeXOfEdgeAtY(p.getData(), y), y, p.getData().getColor());
+	set.add(v);
+	
+	addNodeAtYToSet(p.left, set, y);
+	addNodeAtYToSet(p.right, set, y);
+   }
+
+// insert
    public void insert(Edge data) {
 	      root = insert(root, data, data.getStartVertex().getY());
 	   }
@@ -186,7 +213,7 @@ public class SearchTree {
 	return 1 + size(p.left) + size(p.right);
 }
 
-public int countLeaves()  {
+   public int countLeaves()  {
       return countLeaves(root);
    }
    
@@ -252,9 +279,6 @@ public int countLeaves()  {
     	  this.e = e;
       }
    }
-
-
-
 
 }
 
