@@ -72,18 +72,20 @@ public class PraeComputer {
 			throw new IllegalArgumentException("No polygon given...");
 		}
 		
-		// check polygon to be simple and counterclockwise
-		if (!Geometry.checkSimplePolygon(p)) {
-			throw new IllegalArgumentException("Not a simple polygon!");
-		}
-		if (!Geometry.checkPolygonOrientation(p)) {
-			p = Geometry.turnOrientation(p);
-		}
 		
 		// construct own polygon and identify vertex types
 		if (!createVertices(p)) {
 			return false;
 		}
+		
+		// check polygon to be simple and counterclockwise
+		if (!Geometry.checkSimplePolygon(vertices)) {
+			throw new IllegalArgumentException("Not a simple polygon!");
+		}
+		if (!Geometry.checkPolygonOrientation(vertices)) {
+			vertices = Geometry.turnOrientation(vertices); 
+		}
+		
 		if (!computeVertexType()) {
 			return false;
 		}
@@ -343,7 +345,7 @@ public class PraeComputer {
 		activeEdges.add(toInsert);
 		toInsert.setColor(getNextColor());
 		UpdateInsertTreeSubEvent treeUpdate = 
-				new UpdateInsertTreeSubEvent(methodline, tree.getNodesForY(toInsert.getEndVertex().getY()), toInsert.clone());
+				new UpdateInsertTreeSubEvent(methodline, tree.getNodesForY(toInsert.getStartVertex().getY()), toInsert.clone());
 		return treeUpdate;
 	}
 	
@@ -368,8 +370,7 @@ public class PraeComputer {
 	 * @return
 	 */
 	private Color getNextColor() {
-		// TODO change
-		return GUIColorConfiguration.DIAGONAL;
+		return GUIColorConfiguration.getRandomColor();
 	}
 	
 	private boolean createVertices(Polygon poly) {

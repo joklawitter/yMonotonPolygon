@@ -84,9 +84,9 @@ public class TestHistory {
 		
 		int i = 0;
 		for (SweepLineEvent s : history) {
-			int j = s.getTree().size();
+			int j = s.getVertexSetOfTree().size();
 			assertTrue(Math.abs(j - i) <= 1); // may not vary more than 1 per step
-			assertNotNull(s.getTree()); 
+			assertNotNull(s.getVertexSetOfTree()); 
 			i = j;
 		}
 	}

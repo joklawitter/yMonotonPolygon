@@ -2,11 +2,15 @@ package yMonotonePolygon.Tests;
 
 import static org.junit.Assert.*;
 
+import java.awt.Polygon;
+import java.util.TreeSet;
+
 import org.junit.Test;
 
 import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.PraeComputation.Geometry;
+import yMonotonePolygon.PraeComputation.PraeComputer;
 
 public class TestGeometry {
 
@@ -69,5 +73,13 @@ public class TestGeometry {
 		Edge e = new Edge(first, second);
 		
 		assertTrue(Geometry.computeXOfEdgeAtY(e, 50) == 101);
+	}
+	
+	@Test
+	public void testOrientationCheck() {
+		Polygon p = TestHelper.readTestPolygon("testWrongOrientation");
+		PraeComputer pc = new PraeComputer();
+		pc.work(p);
+		assertTrue(Geometry.checkPolygonOrientation(pc.getVertices()));
 	}
 }

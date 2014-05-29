@@ -52,7 +52,6 @@ public class TestTree {
 		assertTrue(tree.countLeaves() == 2);
 	}
 
-	
 	@Test
 	public void testSearch() {
 		Vertex v1 = new Vertex(10, 10);
