@@ -205,7 +205,7 @@ public class YMonotonePolygonQUI extends QWidget {
 
     public void start() {
 	QPolygonF points2 = new QPolygonF();
-	points2 = TestHelper.readTestQPolygonF("testOneMerge");
+	points2 = TestHelper.readTestQPolygonF("testOneSplit");
 //	points2.add(150, 150);
 //	points2.add(200, 200);
 //	points2.add(140, 10);
