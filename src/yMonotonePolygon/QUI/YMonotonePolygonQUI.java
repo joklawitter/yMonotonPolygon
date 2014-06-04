@@ -321,7 +321,7 @@ public class YMonotonePolygonQUI extends QWidget {
 		currentLinePosition = 0;
 		currentSLPosition = 1;
 	    }
-	} else if (currentSLPosition == praeComputer.getVertices().size()) {
+	} else if (currentSLPosition == praeComputer.getVertices().size() - 1) {
 	    currentMPosition = Method.HANDLE_END.ordinal();
 	    if (currentLinePosition == 0) {
 		updateTextView(Method.HANDLE_END.getName(), Method.HANDLE_END.getLines(), -1, 0);
@@ -358,6 +358,7 @@ public class YMonotonePolygonQUI extends QWidget {
 
 	} else {
 	    if (currentLinePosition == 0) {
+		System.out.println("currentVertices "+ currentVertices.size());
 		currentVertex = currentVertices.get(0);
 		markedVertex.setPos(currentVertex.getX()+2.5, currentVertex.getY()+2.5);
 		historyVertices.add(currentVertex);
@@ -561,7 +562,7 @@ public class YMonotonePolygonQUI extends QWidget {
 		    QApplication.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-			    lineDownClicked();
+			    stepForwardClicked();
 
 			    time = velocity.value() * 1000;
 			    System.out.println("time " + time);
