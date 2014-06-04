@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
 import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
+import yMonotonePolygon.AlgorithmObjects.Method;
 import yMonotonePolygon.AlgorithmObjects.SearchSubEvent;
 import yMonotonePolygon.AlgorithmObjects.SearchTree;
 import yMonotonePolygon.AlgorithmObjects.SubEvent;
@@ -19,7 +20,7 @@ import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.AlgorithmObjects.VertexType;
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 import yMonotonePolygon.PraeComputation.PraeComputer;
-import yMonotonePolygon.AlgorithmObjects.Method;
+import yMonotonePolygon.Tests.TestHelper;
 
 import com.trolltech.qt.core.QPointF;
 import com.trolltech.qt.core.QRectF;
@@ -76,6 +77,12 @@ public class YMonotonePolygonQUI extends QWidget {
     private QGraphicsEllipseItem markedVertex;
     public QGraphicsScene treeDataStructure;
     public QLabel codeSegment;
+    private QLabel codeSegment1;
+    private QLabel codeSegment2;
+    private QLabel codeSegment3;
+    private QLabel codeSegment4;
+    private QLabel codeSegment5;
+    private QLabel codeSegment6;
     public QButtonGroup algorithmController;
     public QPushButton stepBack;
     public QPushButton stepForward;
@@ -120,6 +127,12 @@ public class YMonotonePolygonQUI extends QWidget {
 	treeDataStructure = new QGraphicsScene(new QRectF(0, 0, 50, 20));
 	treeDataStructure.setBackgroundBrush(new QBrush(QColor.green));
 	codeSegment = new QLabel();
+	codeSegment1 = new QLabel("");
+	codeSegment2 = new QLabel("");
+	codeSegment3 = new QLabel("");
+	codeSegment4 = new QLabel("");
+	codeSegment5 = new QLabel("");
+	codeSegment6 = new QLabel("");
 	algorithmController = new QButtonGroup();
 	stepBack = new QPushButton("|<<");
 	stepBack.setToolTip("go to previous line of code");
@@ -192,10 +205,11 @@ public class YMonotonePolygonQUI extends QWidget {
 
     public void start() {
 	QPolygonF points2 = new QPolygonF();
-	points2.add(150, 150);
-	points2.add(200, 200);
-	points2.add(140, 10);
-	points2.add(100, 180);
+	points2 = TestHelper.readTestQPolygonF("testOneMerge");
+//	points2.add(150, 150);
+//	points2.add(200, 200);
+//	points2.add(140, 10);
+//	points2.add(100, 180);
 	// points2.add(150, 150);
 	// points2.add(200, 30);
 	tree = new SearchTree();
@@ -249,12 +263,19 @@ public class YMonotonePolygonQUI extends QWidget {
 	mainLayout.addLayout(buttonLayout, 0, 0);
 	mainLayout.addLayout(editButtonLayout, 0, 1);
 	QGraphicsView sweepLineView = new QGraphicsView(sweepLine);
-	sweepLineView.setBackgroundBrush(new QBrush(QColor.lightGray));
+	sweepLineView.setBackgroundBrush(new QBrush(new QColor(233, 233, 233)));
 	mainLayout.addWidget(sweepLineView, 1, 0);
 	QGraphicsView treeView = new QGraphicsView(treeDataStructure);
 	mainLayout.addWidget(treeView, 2, 0);
 	mainLayout.addWidget(methodTitle, 3, 0);
 	mainLayout.addWidget(codeSegment, 4, 0);
+	mainLayout.addWidget(codeSegment1, 5, 0);
+	mainLayout.addWidget(codeSegment2, 6, 0);
+	mainLayout.addWidget(codeSegment3, 7, 0);
+	mainLayout.addWidget(codeSegment4, 8, 0);
+	mainLayout.addWidget(codeSegment5, 9, 0);
+	mainLayout.addWidget(codeSegment6, 10, 0);
+
 	currentLinePosition = 0;
 	currentSLPosition = 0;
     }
@@ -270,11 +291,25 @@ public class YMonotonePolygonQUI extends QWidget {
     }
 
     public void lineDownClicked() {
-	if (currentState.size() > 0) {
-	    SweepLineEvent sle = currentState.getFirst();
-	    sweepStraightLine.setY(sle.getYOfSweepLine());
-	    currentHistory.add(currentState.getFirst());
-	    currentState.removeFirst();
+	if (currentVertices.size() != 0) {
+	    currentVertex = currentVertices.get(0);
+	    currentVertices.remove(0);
+	    sweepStraightLine.setY(currentVertex.getY());
+	    if (currentVertex.isStartVertex()) {
+		currentEvent = handleStartVertex(currentVertex);
+	    } else if (currentVertex.isEndVertex()) {
+		currentEvent = handleEndVertex(currentVertex);
+	    } else if (currentVertex.isSplitVertex()) {
+		currentEvent = handleSplitVertex(currentVertex);
+	    } else if (currentVertex.isMergeVertex()) {
+		currentEvent = handleMergeVertex(currentVertex);
+	    } else if (currentVertex.isRegularRightVertex()) {
+		currentEvent = handleRegularRightVertex(currentVertex);
+	    } else if (currentVertex.isRegularLeftVertex()) {
+		currentEvent = handleRegularLeftVertex(currentVertex);
+	    }
+	    currentSLPosition++;
+	    currentLinePosition = 0;
 	}
     }
 
@@ -558,6 +593,13 @@ public class YMonotonePolygonQUI extends QWidget {
 
     public void playClicked() {
 	isPaused = !isPaused;
+	if (!isPaused) {
+	    play.setText("||");
+	    play.setToolTip("pause algorithm");
+	} else {
+	    play.setText("play");
+	    play.setToolTip("Automatically step through algorithm");
+	}
 	new Thread() {
 	    @Override
 	    public void run() {
@@ -586,10 +628,6 @@ public class YMonotonePolygonQUI extends QWidget {
 
     }
 
-    public void pauseClicked() {
-
-    }
-
     public void editBtnClicked() {
 
     }
@@ -600,8 +638,82 @@ public class YMonotonePolygonQUI extends QWidget {
 
     public void updateTextView(String method, String[] code, int colorID, int currentLine) {
 	methodTitle.setText(method);
-	String tmp = new String(code[currentLine]);
-	codeSegment.setText(tmp);
+	String redSheet = new String("color: rgb(255, 0, 0);");
+	String greenSheet = new String("color: rgb(35, 200, 35);");
+	String blackSheet = new String("color: rgb(0, 0, 0);");
+
+	if (code.length >= 1) {
+	    codeSegment.setText(new String(code[0]));
+	    if (currentLine == 0) {
+		codeSegment.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment.setText("");
+	}
+	if (code.length >= 2) {
+	    codeSegment1.setText(new String(code[1]));
+	    if (currentLine == 1) {
+		codeSegment1.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment1.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment1.setText("");
+	}
+	if (code.length >= 3) {
+	    codeSegment2.setText(new String(code[2]));
+	    if (currentLine == 2) {
+		codeSegment2.setStyleSheet(greenSheet);
+
+	    } else {
+		codeSegment2.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment2.setText("");
+	}
+	if (code.length >= 4) {
+	    codeSegment3.setText(new String(code[3]));
+	    if (currentLine == 3) {
+		codeSegment3.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment3.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment3.setText("");
+	}
+	if (code.length >= 5) {
+	    codeSegment4.setText(new String(code[4]));
+	    if (currentLine == 4) {
+		codeSegment4.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment4.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment4.setText("");
+	}
+	if (code.length >= 6) {
+	    codeSegment5.setText(new String(code[5]));
+	    if (currentLine == 5) {
+		codeSegment5.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment5.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment5.setText("");
+	}
+	if (code.length >= 7) {
+	    codeSegment6.setText(new String(code[6]));
+	    if (currentLine == 6) {
+		codeSegment6.setStyleSheet(greenSheet);
+	    } else {
+		codeSegment6.setStyleSheet(blackSheet);
+	    }
+	} else {
+	    codeSegment6.setText("");
+	}
+
     }
 
     private SweepLineEvent initSweepLineEvent(Vertex v) {
@@ -667,6 +779,184 @@ public class YMonotonePolygonQUI extends QWidget {
 	    cloned.add(e.clone());
 	}
 	return cloned;
+    }
+
+    private SweepLineEvent handleStartVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+	Edge nextEdge = v.getNextEdge();
+
+	// line 1: insert edge in SearchTree
+	UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 1);
+	subEvents.add(treeUpdate);
+
+	// line 2: set v as helper
+	UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 2);
+	subEvents.add(helperUpdate);
+
+	event.setSubEvents(subEvents);
+	return event;
+    }
+
+    private SweepLineEvent handleEndVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+	Edge prevEdge = v.getPrevEdge();
+
+	// line 1: if helper is merge vertex
+	assert (prevEdge.getHelper() != null);
+	boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+	BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
+	subEvents.add(boolEvent);
+
+	// then line 2: insert diagonal v-helper
+	if (helperIsMerge) {
+	    AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
+	    subEvents.add(addDiagonalEvent);
+	}
+
+	// line 3: delete prevEdge from tree
+	UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
+	subEvents.add(deletionEvent);
+
+	event.setSubEvents(subEvents);
+	return event;
+    }
+
+    private SweepLineEvent handleSplitVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+
+	// line 1: search in tree to find edge left of v
+	Edge leftOfVEdge = tree.searchEdge(v);
+	assert (leftOfVEdge != null);
+	SearchSubEvent searchEvent = new SearchSubEvent(1, leftOfVEdge);
+	subEvents.add(searchEvent);
+
+	// line 2: add diagonal to helper of found edge and split vertex v
+	AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 2);
+	subEvents.add(addDiagonalEvent);
+
+	// line 3: update helper - v is now helper
+	UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 3);
+	subEvents.add(helperUpdate);
+
+	// line 4: insert next edge of v in t
+	Edge nextEdge = v.getNextEdge();
+	UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 4);
+	subEvents.add(treeUpdate);
+
+	// line 5: set v as helper of this edge
+	UpdateHelperSubEvent helperUpdate2 = updateHelper(nextEdge, v, 5);
+	subEvents.add(helperUpdate2);
+
+	event.setSubEvents(subEvents);
+	return event;
+    }
+
+    private SweepLineEvent handleMergeVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+	Edge prevEdge = v.getPrevEdge();
+
+	// line 1: if helper of edge right of v is merge vertex
+	boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+	BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
+	subEvents.add(boolEvent);
+
+	// then line 2: insert diagonal v-helper
+	if (helperIsMerge) {
+	    AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
+	    subEvents.add(addDiagonalEvent);
+	}
+
+	// line 3: delete prevEdge from tree
+	UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
+	subEvents.add(deletionEvent);
+
+	// line 4: search in tree to find edge left of v
+	Edge leftOfVEdge = tree.searchEdge(v);
+	SearchSubEvent searchEvent = new SearchSubEvent(4, leftOfVEdge);
+	subEvents.add(searchEvent);
+
+	// line 5: if helper of edge left of v is merge vertex
+	boolean helperIsMerge2 = leftOfVEdge.getHelper().isMergeVertex();
+	BooleanSubEvent boolEvent2 = new BooleanSubEvent(5, helperIsMerge2);
+	subEvents.add(boolEvent2);
+
+	// then line 6: insert diagonal v-helper
+	if (helperIsMerge2) {
+	    AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 6);
+	    subEvents.add(addDiagonalEvent);
+	}
+
+	// line 7: set v as helper of this edge
+	UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 7);
+	subEvents.add(helperUpdate);
+
+	event.setSubEvents(subEvents);
+	return event;
+    }
+
+    private SweepLineEvent handleRegularLeftVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+
+	Edge prevEdge = v.getPrevEdge();
+	// line 1: if helper of edge before v is merge vertex
+	boolean helperIsMerge = prevEdge.getHelper().isMergeVertex();
+	BooleanSubEvent boolEvent = new BooleanSubEvent(1, helperIsMerge);
+	subEvents.add(boolEvent);
+
+	// then line 2: insert diagonal v-helper
+	if (helperIsMerge) {
+	    AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, prevEdge, 2);
+	    subEvents.add(addDiagonalEvent);
+	}
+
+	// line 3: delete prevEdge from tree
+	UpdateDeletionTreeSubEvent deletionEvent = deleteEdgeFromTree(prevEdge, 3);
+	subEvents.add(deletionEvent);
+
+	Edge nextEdge = v.getNextEdge();
+	// line 4: insert edge in SearchTree
+	UpdateInsertTreeSubEvent treeUpdate = insertEdgeInTree(nextEdge, 4);
+	subEvents.add(treeUpdate);
+
+	// line 5: set v as helper
+	UpdateHelperSubEvent helperUpdate = updateHelper(nextEdge, v, 5);
+	subEvents.add(helperUpdate);
+
+	event.setSubEvents(subEvents);
+	return event;
+    }
+
+    private SweepLineEvent handleRegularRightVertex(Vertex v) {
+	SweepLineEvent event = initSweepLineEvent(v);
+	LinkedList<SubEvent> subEvents = new LinkedList<SubEvent>();
+
+	// line 1: search in tree to find edge left of v
+	Edge leftOfVEdge = tree.searchEdge(v);
+	SearchSubEvent searchEvent = new SearchSubEvent(1, leftOfVEdge);
+	subEvents.add(searchEvent);
+
+	// line 2: if helper of edge left of v is merge vertex
+	boolean helperIsMerge = leftOfVEdge.getHelper().isMergeVertex();
+	BooleanSubEvent boolEvent = new BooleanSubEvent(2, helperIsMerge);
+	subEvents.add(boolEvent);
+
+	// then line 3: insert diagonal v-helper
+	if (helperIsMerge) {
+	    AddDiagonalSubEvent addDiagonalEvent = addDiagonal(v, leftOfVEdge, 3);
+	    subEvents.add(addDiagonalEvent);
+	}
+
+	// line 4: set v as helper of this edge
+	UpdateHelperSubEvent helperUpdate = updateHelper(leftOfVEdge, v, 4);
+	subEvents.add(helperUpdate);
+
+	event.setSubEvents(subEvents);
+	return event;
     }
 
     public static void main(String[] args) {
