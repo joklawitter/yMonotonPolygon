@@ -3,7 +3,6 @@ package yMonotonePolygon.Tests;
 import static org.junit.Assert.*;
 
 import java.awt.Polygon;
-import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -81,5 +80,12 @@ public class TestGeometry {
 		PraeComputer pc = new PraeComputer();
 		pc.work(p);
 		assertTrue(Geometry.checkPolygonOrientation(pc.getVertices()));
+	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void testNotSimplePolygon() {
+		Polygon p = TestHelper.readTestPolygon("testNonSimplePolygon");
+		PraeComputer pc = new PraeComputer();
+		pc.work(p);
 	}
 }

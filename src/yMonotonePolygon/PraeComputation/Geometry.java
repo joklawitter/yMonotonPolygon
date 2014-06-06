@@ -1,5 +1,7 @@
 package yMonotonePolygon.PraeComputation;
 
+import java.awt.geom.Line2D;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import yMonotonePolygon.AlgorithmObjects.Edge;
@@ -12,8 +14,46 @@ public class Geometry {
 	}
 	
 	public static boolean checkSimplePolygon(TreeSet<Vertex> vertices) {
-		// TODO
+		HashSet<Edge> edges  = new HashSet<Edge>(vertices.size());
+		for (Vertex v : vertices) {
+			edges.add(v.getNextEdge());
+		}
+		
+		for (Edge e : edges) {
+			for (Edge f : edges) {
+				if (e == f) {
+					continue;
+				}
+				if (!shareEndPoint(e, f) && intersect(e, f)) {
+					return false;
+				}
+			}
+			
+		}
+		
 		return true;
+	}
+
+	/**
+	 * Returns whether the two edges intersect, end points included
+	 * @param e 
+	 * @param f
+	 * @return whether the two edges intersect, end points included
+	 */
+	private static boolean intersect(Edge e, Edge f) {
+		return Line2D.linesIntersect(e.getStartVertex().getX(), e.getStartVertex().getY(), 
+				e.getEndVertex().getX(), e.getEndVertex().getY(), 
+				f.getStartVertex().getX(), f.getStartVertex().getY(), 
+				f.getEndVertex().getX(), f.getEndVertex().getY());
+	}
+
+	private static boolean shareEndPoint(Edge e, Edge f) {
+		if (e.getEndVertex() == f.getStartVertex()) {
+			return true;
+		} else if (e.getStartVertex() == f.getEndVertex()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -7,7 +7,6 @@ import java.awt.Polygon;
 import org.junit.Test;
 
 import yMonotonePolygon.AlgorithmObjects.Vertex;
-import yMonotonePolygon.GUI.GUIColorConfiguration;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 
 public class TestPraeComputation {

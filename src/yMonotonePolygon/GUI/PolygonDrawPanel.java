@@ -8,13 +8,7 @@ import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-
-
-
-
-
 import yMonotonePolygon.AlgorithmObjects.Edge;
-import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 
 
