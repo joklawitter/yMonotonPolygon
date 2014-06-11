@@ -41,6 +41,10 @@ public class Vertex implements Comparable<Vertex> {
 	public int getY() {
 		return y;
 	}
+	
+	public Color getColor() {
+		return color;
+	}
 
 	
 	// checking the type
