@@ -47,7 +47,11 @@ public enum Method {
 			new String[]
 					{"This is the drawing mode for polygons.",
 					"- Click into the the panel to add new points.",
-					"- Click near the start point to close the polygon."});
+					"- Click near the start point to close the polygon."}), 
+	ERROR ("Illegal Polygon",
+			new String[]
+					{"The polygon may not intersect itself!",
+					"File must be in correct format!"});
 	
 	private final String name;
 	private final String[] lines;

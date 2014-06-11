@@ -10,6 +10,8 @@ import java.awt.GridLayout;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.File;
@@ -62,11 +64,12 @@ import yMonotonePolygon.AlgorithmObjects.VertexType;
 import yMonotonePolygon.GUI.MethodPanel;
 import yMonotonePolygon.GUI.PolygonDrawPanel;
 import yMonotonePolygon.GUI.TreeStatusPanel;
+import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 import yMonotonePolygon.Tests.TestHelper;
 
 
-public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
+public class YMonotonePolygonGUI extends JFrame  implements ActionListener, MouseListener {
 	private static final long serialVersionUID = -5073162102279789347L;
 	
 	// --- algorithm things --- algorithm things --- algorithm things --- algorithm things ---
@@ -134,13 +137,13 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
     private boolean isPaused;
     public JSlider velocity;    
     // menu and buttons | load polygon and draw polygon control
-    public JToggleButton editBtn;
+    public JButton editBtn;
     private boolean inDrawMode = false;
     public JButton loadData;
     public ButtonGroup editButtonGroup;
 
     // method panel
-    public JPanel methodPanel;
+    public MethodPanel methodPanel;
     //public QLabel methodTitle;
     //public QLabel treeTitle;
     
@@ -242,7 +245,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 		algorithmController.add(velocity);
 		
 		// loading input
-		editBtn = new JToggleButton("Draw");
+		editBtn = new JButton("Draw");
 		editBtn.addActionListener(this);
 		loadData = new JButton("Load");
 		loadData.addActionListener(this);
@@ -277,8 +280,9 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 		methodPanel.setMinimumSize(new Dimension(1, 100));
 	}
 
-
-	private void initAlgorithm(Polygon p) {		
+	private void initAlgorithm(Polygon p) {	
+		inDrawMode = false;
+		
 		isPaused = true;
 		currentSLPosition = -1;
 		currentMPosition = 0;
@@ -287,7 +291,14 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 		time = 1000;
 		resetSlider();
 		
-		praeComputer.work(p);
+		try {
+			praeComputer.work(p);
+		} catch (IllegalPolygonException e) {
+			methodPanel.setMethod(Method.ERROR);
+		}
+		
+		sweepLine.setP(p);
+		sweepLine.repaint();
 		LinkedList<SweepLineEvent> history = praeComputer.getHistory();
 		//Line2D sweepStraight = new QLineF(0, 0, 500, 0);
 		//sweepStraightLine = new Line2D(sweepStraight, null, sweepLine);
@@ -328,16 +339,60 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
         }
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (inDrawMode) {
+			int eX = e.getX();
+			int eY = e.getY();
+			if (p.npoints > 3) {
+				int x = p.xpoints[0];
+				int y = p.ypoints[0];
+				
+				if ((Math.abs(eX - x) + Math.abs(eY - y)) < 10) {
+					sweepLine.drawLine(p.xpoints[0], p.ypoints[0], p.xpoints[p.npoints - 1], p.ypoints[p.npoints - 1]);
+					endDrawMode();
+					return;
+				}
+				
+				// TODO check self intersection
+			}
+			addPoint(eX, eY);
+		}
+	}
+
+	private void addPoint(int eX, int eY) {
+		System.out.print(eX + "," + eY + " ");
+		p.addPoint(eX, eY);	
+		sweepLine.drawPoint(eX, eY);
+		if (p.npoints >= 2) {
+			sweepLine.drawLine(eX, eY, p.xpoints[p.npoints - 2], p.ypoints[p.npoints - 2]);			
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+	}
+	
     public void stepForwardClicked() {
     	System.out.println("stepForward SL: " + currentSLPosition + " Method: " + currentMPosition + " Line: " + currentLinePosition);
     	currentLinePosition += 1;
     	if (currentLinePosition >= currentEvent.getNumberOfLines()) {
     		// we finished this event and have to go one event/vertex forward
     		skipToNextEvent();
-    		repaint();
     	} else { // handle just the next subevent
     		handleSubEvent(currentEvent.getSubEvents().get(currentLinePosition));
-    		repaint();
     	}
     }
     
@@ -346,10 +401,8 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
     	currentLinePosition -= 1;
     	if (currentLinePosition < 0) {
     		skipToPreviousEventAtEnd();
-    		repaint();
     	} else { // reset all subevents in this method so far
     		handleSubEventsUpToCurrentLine();
-    		repaint();
     	}
     }
 
@@ -408,7 +461,6 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 		    currentLinePosition = 0;
 		}*/
     }
-
 
 	private void skipToNextEvent() {
 		// TODO check if there is a next vertex and if start sweepline in first line
@@ -728,8 +780,8 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
     }
 
     public void editBtnClicked() {
-    	inDrawMode = !inDrawMode;
-    	if (inDrawMode) {// set draw mode
+    	if (!inDrawMode) {// set draw mode
+    		inDrawMode = !inDrawMode;
     		setDrawMode();
     	} else {
     		endDrawMode();
@@ -738,24 +790,35 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 
 	private void setDrawMode() {
 		// clear current 
+		sweepLine.clear();
 		
-    	// set button background color red to signal we are in draw mode
-		// TODO ... 
     	// set border of main panel red to signal that we are in draw mode
-    	
+		// TODO ... 
 		
     	// set text in method field to instructions:
     	// - click to set new point
     	// - click near first point to close polygon
     	// - click [draw] to abort
-    	
+		methodPanel.setMethod(Method.DRAW_MODE);
+		
+		p = new Polygon();
     	// catch points
-    	
+		sweepLine.addMouseListener(this);
+		sweepLine.setDrawMode();
+
+		System.out.print("polygon ");
 	}
 	
     private void endDrawMode() {
-		// TODO Auto-generated method stub
-
+    	inDrawMode = false;
+    	if (p.npoints >= 3) {
+    		initAlgorithm(p);
+    	}
+    	
+    	System.out.println("");
+    	sweepLine.removeMouseListener(this);
+    	sweepLine.repaint();
+    	inDrawMode = false;
 	}
 
 	public void loadDataClicked() {
@@ -763,35 +826,28 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "Text", "txt");
 	    chooser.setFileFilter(filter);
-	    File workingDirectory = new File(System.getProperty("user.dir"));
+	    File workingDirectory = new File(System.getProperty("user.dir") + File.separator 
+	    		+ "PolygonExamples");
 	    chooser.setCurrentDirectory(workingDirectory);
 	    int returnVal = chooser.showOpenDialog(this);
 	    String address = null;
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	       System.out.println("You chose to open this file: " +
-	            chooser.getSelectedFile().getName());
 	       address = chooser.getSelectedFile().getName();
 	    }
 		
+	    if (address == null) {
+	    	return;
+	    }
+	    
 		// load file
 		Polygon p = TestHelper.readPolygon(address);
-		
-		// check polygon and handle error with message in method block
-		if (!checkPolygon(p)) {
-			return;
-		}
 		
 		// init algorithm
 		initAlgorithm(p);
     }
 
-	private boolean checkPolygon(Polygon p) {
-		// check polygon and handle error with message in method block
-		// TODO
-		
-		return true;
-	}
 
+ 
 	/*
 	private SweepLineEvent handleStartVertex(Vertex v) {
 		SweepLineEvent event = initSweepLineEvent(v);
@@ -973,4 +1029,6 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener {
 
 	
 */
+
+
 }

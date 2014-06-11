@@ -69,10 +69,11 @@ public class PraeComputer {
 	 * Includes computing the whole history and diagonals to add.
 	 * @param p Polygon on which to work
 	 * @return whether it was successful
+	 * @throws IllegalPolygonException 
 	 */
-	public boolean work(Polygon p) {
+	public boolean work(Polygon p) throws IllegalPolygonException {
 		if (p == null) {
-			throw new IllegalArgumentException("No polygon given...");
+			throw new IllegalPolygonException("Not polygon given!");
 		}
 		
 		
@@ -83,7 +84,7 @@ public class PraeComputer {
 		
 		// check polygon to be simple and counterclockwise
 		if (!Geometry.checkSimplePolygon(vertices)) {
-			throw new IllegalArgumentException("Not a simple polygon!");
+			throw new IllegalPolygonException("Not a simple polygon!");
 		}
 		if (!Geometry.checkPolygonOrientation(vertices)) {
 			vertices = Geometry.turnOrientation(vertices); 
