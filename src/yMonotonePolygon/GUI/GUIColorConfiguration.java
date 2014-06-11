@@ -49,7 +49,9 @@ public final class GUIColorConfiguration {
 	
 	public static Color getRandomColor() {
 		Random random = new Random();
+
 		int i = Math.abs(random.nextInt()) % COLORS.size();
+
 		return COLORS.get(i);
 	}
 }

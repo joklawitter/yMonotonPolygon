@@ -1,23 +1,23 @@
 package yMonotonePolygon.AlgorithmObjects;
 
 public enum Method {
-	HANLDE_START ("handleStartVertex(v)",
+	HANDLE_START ("handleStartVertex(v)",
 			new String[] 
 					{"insert v.nextEdge in T",
 					"set v.nextEdge.helper = v"}), 
-	HANLDE_END ("handleEndVertex(v)",
+	HANDLE_END ("handleEndVertex(v)",
 			new String[] 
 					{"if v.prevEdge.helper is merge vertex",
 					"  then insert diagonal v-v.prevEdge.helper",
 					"delete v.prevEdge from T"}), 
-	HANLDE_SPLIT ("handleSplitVertex(v)",
+	HANDLE_SPLIT ("handleSplitVertex(v)",
 			new String[] 
 					{"search in T to find edge e directly left of v",
 					"insert diagonal v-e.helper",
 					"set e.helper = v",
 					"insert v.nextEdge in T",
 					"set v.nextEdge.helper = v"}), 
-	HANLDE_MERGE ("handleMergeVertex(v)",
+	HANDLE_MERGE ("handleMergeVertex(v)",
 			new String[] 
 					{"if v.prevEdge.helper is merge vertex",
 					"  then insert diagonal v-v.prevEdge.helper",
@@ -26,19 +26,28 @@ public enum Method {
 					"if e.helper is merge vertex",
 					"  then insert diagonal v-e.helper",
 					"set e.helper = v"}), 
-	HANLDE_LEFT_REGULAR ("handleRegularVertex(v)",
+	HANDLE_LEFT_REGULAR ("handleRegularVertex(v)",
 			new String[] 
 					{"if v.prevEdge.helper is merge vertex",
 					"    then insert diagonal v-v.prevEdge.helper",
 					"delete v.prevEdge from T",
 					"insert v.nextEdge in T",
 					"set v.nextEdge.helper = v"}),	
-	HANLDE_RIGHT_REGULAR ("handleRegularVertex(v)",
+	HANDLE_RIGHT_REGULAR ("handleRegularVertex(v)",
 			new String[] 
 					{"search in T to find edge e directly left of v",
 					"if e.helper is merge vertex",
 					"    then insert diagonal v-e.helper",
-					"set e.helper = v"});
+					"set e.helper = v"}), 
+	WELCOME ("Welcome!",
+			new String[]
+					{"This is the y-monotone polygon algorithm visualization.",
+					"You can either open a polygon file or draw a polygon."}), 
+	DRAW_MODE ("Draw mode!",
+			new String[]
+					{"This is the drawing mode for polygons.",
+					"- Click into the the panel to add new points.",
+					"- Click near the start point to close the polygon."});
 	
 	private final String name;
 	private final String[] lines;
@@ -52,7 +61,6 @@ public enum Method {
 		return name;
 	}
 
-	
 	public String[] getLines() {
 		return lines;
 	}

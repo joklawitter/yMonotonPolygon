@@ -18,6 +18,9 @@ import yMonotonePolygon.AlgorithmObjects.UpdateInsertTreeSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 
+import com.trolltech.qt.gui.QPolygon;
+import com.trolltech.qt.gui.QPolygonF;
+
 public class PraeComputer {
 	
 	/** input polygon */
@@ -102,6 +105,56 @@ public class PraeComputer {
 		// - happens automatically with natural ordering and TreeSet
 
 		
+		// run algorithm and create corresponding events
+		for (Vertex v : vertices) {
+			handleVertexEvent(v);
+			handledVertices++;
+		}
+		
+		assert (handledVertices == vertices.size());
+		
+		//System.out.println(toString());
+		
+		return true;
+	}
+	
+	/**
+	 * Does the prae-computation. 
+	 * Includes computing the whole history and diagonals to add.
+	 * @param p Polygon on which to work
+	 * @return whether it was successful
+	 */
+	public boolean work(QPolygonF p) {
+		if (p == null) {
+			throw new IllegalArgumentException("No polygon given...");
+		}
+		
+		// construct own polygon and identify vertex types
+		if (!createVertices(p)) {
+			return false;
+		}
+		
+		// check polygon to be simple and counterclockwise
+		if (!Geometry.checkSimplePolygon(vertices)) {
+			throw new IllegalArgumentException("Not a simple polygon!");
+		}
+		if (!Geometry.checkPolygonOrientation(vertices)) {
+			vertices = Geometry.turnOrientation(vertices); 
+		}
+		
+		if (!computeVertexType()) {
+			return false;
+		}
+		
+		// initialize fields
+		tree = new SearchTree();
+		diagonals = new LinkedList<Edge>();
+		history = new LinkedList<SweepLineEvent>();
+		activeEdges = new TreeSet<Edge>();
+		
+		// sort vertices y-x-lexicographical
+		// - happens automatically with natural ordering and TreeSet
+
 		// run algorithm and create corresponding events
 		for (Vertex v : vertices) {
 			handleVertexEvent(v);
@@ -371,6 +424,36 @@ public class PraeComputer {
 	 */
 	private Color getNextColor() {
 		return GUIColorConfiguration.getRandomColor();
+	}
+	
+	private boolean createVertices(QPolygonF p2) {
+		vertices = new TreeSet<Vertex>();
+		
+		
+		Vertex first = new Vertex((int)p2.at(0).x(), (int)p2.at(0).y());
+		vertices.add(first);
+		Vertex current = first;
+		Vertex prev;
+		for (int i = 1; i < (int)p2.count(); i++) {
+			prev = current;
+			current = new Vertex((int)p2.at(i).x(), (int)p2.at(i).y());
+			current.setPrev(prev);
+			prev.setNext(current);
+			vertices.add(current);
+		}
+		first.setPrev(current); // current is now last one
+		current.setNext(first);
+		
+		// now set the edges between them
+		current = first;
+		do { 
+			Edge e = new Edge(current, current.getNext());
+			current.setNextEdge(e);
+			current = current.getNext();
+			current.setPrevEdge(e);			
+		} while (current != first);
+
+		return true;
 	}
 	
 	private boolean createVertices(Polygon poly) {

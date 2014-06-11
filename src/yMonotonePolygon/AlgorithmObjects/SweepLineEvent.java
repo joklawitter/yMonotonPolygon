@@ -18,15 +18,16 @@ public class SweepLineEvent {
 	private Vertex vertex;
 	
 	// 4th, the sub-events of this event
-	private LinkedList<SubEvent> subEvents;	
+	private LinkedList<SubEvent> subEvents;
+	
 	
 	public SweepLineEvent(Vertex v, int numberOfDiagonals, int numberOfHandledVertices, 
-			TreeSet<Vertex> vertexSetOfTree, TreeSet<Edge> aktiveEdges) {
+			TreeSet<Vertex> vertexSetOfTree, TreeSet<Edge> activeEdges) {
 		this.vertex = v;
 		this.numberOfDiagonals = numberOfDiagonals;
 		this.numberOfHandledVertices = numberOfHandledVertices;
 		this.vertexSetOfTree = vertexSetOfTree;
-		this.activeEdges = aktiveEdges;
+		this.activeEdges = activeEdges;
 	}
 	
 	public Vertex getVertex() {
@@ -51,6 +52,10 @@ public class SweepLineEvent {
 		
 	public int getNumberOfDiagonals() {
 		return numberOfDiagonals;
+	}
+	
+	public int getNumberOfLines() {
+		return subEvents.size();
 	}
 	
 	public TreeSet<Vertex> getVertexSetOfTree() {

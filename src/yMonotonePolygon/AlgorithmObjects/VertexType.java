@@ -1,12 +1,12 @@
 package yMonotonePolygon.AlgorithmObjects;
 
 public enum VertexType {
-	START (Method.HANLDE_START), 
-	END (Method.HANLDE_END), 
-	SPLIT (Method.HANLDE_SPLIT), 
-	MERGE (Method.HANLDE_MERGE), 
-	REGULAR_LEFT (Method.HANLDE_LEFT_REGULAR), 
-	REGULAR_RIGHT (Method.HANLDE_RIGHT_REGULAR);
+	START (Method.HANDLE_START), 
+	END (Method.HANDLE_END), 
+	SPLIT (Method.HANDLE_SPLIT), 
+	MERGE (Method.HANDLE_MERGE), 
+	REGULAR_LEFT (Method.HANDLE_LEFT_REGULAR), 
+	REGULAR_RIGHT (Method.HANDLE_RIGHT_REGULAR);
 	
 	private final Method m;
 	
