@@ -68,7 +68,7 @@ public class PolygonDrawPanel extends JPanel {
 
 	public PolygonDrawPanel() {
 		this.setBackground(Color.GRAY);
-		this.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+		this.setBorder(BorderFactory.createLoweredBevelBorder());
 		this.setMinimumSize(new Dimension(1600,600));
 
 	}
@@ -81,6 +81,8 @@ public class PolygonDrawPanel extends JPanel {
 	}
 	
 	public void drawSweepLineAt(int yPosition) {
+		Graphics2D g2 = (Graphics2D) this.getGraphics();
+		
 		// TODO draw the sweepline at the given y position
 	}
 	

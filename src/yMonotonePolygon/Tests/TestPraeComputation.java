@@ -7,12 +7,13 @@ import java.awt.Polygon;
 import org.junit.Test;
 
 import yMonotonePolygon.AlgorithmObjects.Vertex;
+import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 
 public class TestPraeComputation {
 
 	@Test
-	public void readTest() {
+	public void readTest() throws IllegalPolygonException {
 		Polygon p = TestHelper.readTestPolygon("testDiamond");
 		PraeComputer pc = new PraeComputer();
 		assertTrue(pc.work(p));
@@ -22,7 +23,7 @@ public class TestPraeComputation {
 	}
 	
 	@Test
-	public void printTest() {
+	public void printTest() throws IllegalPolygonException {
 		System.out.println(">> Read test:");
 
 		Polygon p = TestHelper.readTestPolygon("testDiamond");
@@ -36,7 +37,7 @@ public class TestPraeComputation {
 	}
 	
 	@Test
-	public void oneMergeTest() {
+	public void oneMergeTest() throws IllegalPolygonException {
 		System.out.println(">> Merge test:");
 		Polygon p = TestHelper.readTestPolygon("testOneMerge");
 		PraeComputer pc = new PraeComputer();
@@ -50,7 +51,7 @@ public class TestPraeComputation {
 	}
 	
 	@Test
-	public void oneSplitTest() {
+	public void oneSplitTest() throws IllegalPolygonException {
 		System.out.println(">> Split test:");
 		Polygon p = TestHelper.readTestPolygon("testOneSplit");
 		PraeComputer pc = new PraeComputer();
@@ -64,7 +65,7 @@ public class TestPraeComputation {
 	}
 	
 	@Test
-	public void twoSplitTwoMergeTest() {
+	public void twoSplitTwoMergeTest() throws IllegalPolygonException {
 		System.out.println(">> 2-2 test:");
 		Polygon p = TestHelper.readTestPolygon("example2");
 		PraeComputer pc = new PraeComputer();

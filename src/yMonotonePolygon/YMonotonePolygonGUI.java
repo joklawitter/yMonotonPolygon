@@ -300,6 +300,9 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		sweepLine.setP(p);
 		sweepLine.repaint();
 		LinkedList<SweepLineEvent> history = praeComputer.getHistory();
+		sweepStraightLine = new Line2D.Float(0, 0, 500, 0);
+		
+		
 		//Line2D sweepStraight = new QLineF(0, 0, 500, 0);
 		//sweepStraightLine = new Line2D(sweepStraight, null, sweepLine);
 		//QPen pen = new QPen(QColor.black);
@@ -463,6 +466,22 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
     }
 
 	private void skipToNextEvent() {
+		currentSLPosition++;
+		if (currentSLPosition >= praeComputer.getHistory().size()) {
+			currentSLPosition = praeComputer.getHistory().size() - 1;	
+		}
+		SweepLineEvent sle = praeComputer.getHistory().get(currentSLPosition);
+		//sweepStraightLine.setY(sle.getYOfSweepLine());
+		currentLinePosition = 0;
+		/*markedVertex.setPos(sle.getVertex().getX() + 2.5, sle.getVertex().getY() + 2.5);
+		markedVertex.setPen(new QPen(new QColor(sle.getVertex().getColor().getRGB())));
+		markedVertex.setBrush(new QBrush(new QColor(sle.getVertex().getColor().getRGB())));
+		diagonalItems.clear();*/
+		
+		for (int i = 0; i < sle.getNumberOfDiagonals(); i++) {
+			//QGraphicsLineItem tmp = new QGraphicsLineItem(praeComputer.getDiagonals().get(i).getStartVertex().getX(), praeComputer.getDiagonals().get(i).getStartVertex().getY(), praeComputer.getDiagonals().get(i).getEndVertex().getX(), praeComputer.getDiagonals().get(i).getEndVertex().getY(), null, sweepLine);
+			//diagonalItems.add(tmp);
+		}
 		// TODO check if there is a next vertex and if start sweepline in first line
 		
 	}

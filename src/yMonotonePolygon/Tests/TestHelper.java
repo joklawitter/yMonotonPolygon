@@ -25,6 +25,7 @@ public class TestHelper {
 	
 	public static Polygon readPolygon(String adress) {
 		Polygon p = null;
+		System.out.println("readPolygon adress: " + adress);
 		try {
 			p = FileInputReader.readInputFile("PolygonExamples/" +  adress);
 		} catch (IOException e) {

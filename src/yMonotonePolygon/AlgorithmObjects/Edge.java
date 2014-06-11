@@ -91,7 +91,7 @@ public class Edge implements Comparable<Edge> {
 	
 	@Override
 	public int compareTo(Edge o) {
-		return Integer.compare(this.getStartVertex().getX(), o.getStartVertex().getX());
+		return 0;//Integer.compare(this.getStartVertex().getX(), o.getStartVertex().getX());
 	}
 
 

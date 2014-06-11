@@ -13,6 +13,7 @@ import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.SubEvent;
 import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
+import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 
 public class TestHistory {
@@ -20,7 +21,7 @@ public class TestHistory {
 	PraeComputer pc;
 	
 	@Before
-	public void init() {
+	public void init() throws IllegalPolygonException {
 		pc = new PraeComputer();
 		pc.work(TestHelper.readTestPolygon("example2"));
 	}

@@ -9,6 +9,7 @@ import org.junit.Test;
 import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.PraeComputation.Geometry;
+import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 
 public class TestGeometry {
@@ -75,7 +76,7 @@ public class TestGeometry {
 	}
 	
 	@Test
-	public void testOrientationCheck() {
+	public void testOrientationCheck() throws IllegalPolygonException {
 		Polygon p = TestHelper.readTestPolygon("testWrongOrientation");
 		PraeComputer pc = new PraeComputer();
 		pc.work(p);
@@ -83,7 +84,7 @@ public class TestGeometry {
 	}
 
 	@Test (expected = IllegalArgumentException.class)
-	public void testNotSimplePolygon() {
+	public void testNotSimplePolygon() throws IllegalPolygonException {
 		Polygon p = TestHelper.readTestPolygon("testNonSimplePolygon");
 		PraeComputer pc = new PraeComputer();
 		pc.work(p);
