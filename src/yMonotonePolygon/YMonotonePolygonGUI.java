@@ -473,6 +473,9 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		SweepLineEvent sle = praeComputer.getHistory().get(currentSLPosition);
 		//sweepStraightLine.setY(sle.getYOfSweepLine());
 		currentLinePosition = 0;
+		methodPanel.setMethod(sle.getMethod());
+		methodPanel.setTextlines(sle.getMethod().getLines());
+		
 		/*markedVertex.setPos(sle.getVertex().getX() + 2.5, sle.getVertex().getY() + 2.5);
 		markedVertex.setPen(new QPen(new QColor(sle.getVertex().getColor().getRGB())));
 		markedVertex.setBrush(new QBrush(new QColor(sle.getVertex().getColor().getRGB())));
@@ -487,6 +490,11 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 	}
 	
     private void skipToPreviousEvent() {
+    	currentSLPosition = (currentSLPosition == 0) ?  0 : (currentSLPosition - 1);
+    	SweepLineEvent sle = praeComputer.getHistory().get(currentSLPosition);
+    	currentLinePosition = sle.getSubEvents().size() - 1;
+    	methodPanel.setMethod(sle.getMethod());
+    	methodPanel.setTextlines(sle.getMethod().getLines());
 		// TODO check if there is a prev vertex and if start sweepline in FIRST line of it
 		
 	}
