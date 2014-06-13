@@ -25,6 +25,8 @@ public final class GUIColorConfiguration {
 	public static final Color UNHANDLED_EVENT = Color.BLACK;
 	
 	public static final Color SWEEP_LINE = Color.BLACK; // TODO: or something else + dotted/dashed?
+	
+	public static final Color DATASTRUCTURE_BACKGROUND = Color.GRAY;
 
 	public static final ArrayList<Color> COLORS;
 	

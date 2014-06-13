@@ -120,7 +120,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
     
     // --- GUI things --- GUI things --- GUI things --- GUI things ---
     // for the tree data structure status
-    public JPanel treeDataStructure;
+    public TreeStatusPanel treeDataStructure;
 
     // menu and buttons
     public JPanel menue;
@@ -295,13 +295,18 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 			praeComputer.work(p);
 		} catch (IllegalPolygonException e) {
 			methodPanel.setMethod(Method.ERROR);
+			return;
 		}
 		
+		// draw the polygon
 		sweepLine.setP(p);
 		sweepLine.repaint();
-		LinkedList<SweepLineEvent> history = praeComputer.getHistory();
+		
+		currentHistory = praeComputer.getHistory();
 		sweepStraightLine = new Line2D.Float(0, 0, 500, 0);
 		
+		
+		treeDataStructure.setDataStructure(currentHistory.get(3).getVertexSetOfTree());
 		
 		//Line2D sweepStraight = new QLineF(0, 0, 500, 0);
 		//sweepStraightLine = new Line2D(sweepStraight, null, sweepLine);
