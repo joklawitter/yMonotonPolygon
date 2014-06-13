@@ -103,8 +103,6 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 
     public long time;
 
-    private LinkedList<SweepLineEvent> currentState;
-
     private int currentSLPosition;
     private int currentMPosition;
     private int currentLinePosition;
@@ -302,19 +300,17 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		sweepLine.setP(p);
 		sweepLine.repaint();
 		
+		// set the diagonals in the sweepLine Panel, later just update the number of painted ones
 		currentHistory = praeComputer.getHistory();
-		sweepStraightLine = new Line2D.Float(0, 0, 500, 0);
+		diagonals = praeComputer.getDiagonals();
+		sweepLine.setDiagonals(diagonals);
 		
-		
-		//treeDataStructure.setDataStructure(currentHistory.get(3).getVertexSetOfTree());
-		
-		//Line2D sweepStraight = new QLineF(0, 0, 500, 0);
-		//sweepStraightLine = new Line2D(sweepStraight, null, sweepLine);
-		//QPen pen = new QPen(QColor.black);
-		//pen.setStyle(Qt.PenStyle.DashLine);
-		//pen.setBrush(new QBrush(QColor.black));
-		
-		//sweepStraightLine.setPen(pen);
+		/*SweepLineEvent s = currentHistory.get(3);
+		treeDataStructure.setDataStructure(s.getVertexSetOfTree());
+		treeDataStructure.repaint();
+		sweepLine.setCurrentVertex(s.getVertex());
+		sweepLine.setNumberOfDiagonals(diagonals.size());
+		sweepLine.setActiveEdges(s.getActiveEdges());*/
 	}
 	
 	private void resetSlider() {
@@ -788,7 +784,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
     	new Thread() {
 	    @Override
 	    	public void run() {
-	    		while (!isPaused && currentState.size() > 0) {
+	    		while (!isPaused && currentHistory.size() > 0) {
 
 	    			EventQueue.invokeLater(new Runnable() {
 	    				@Override

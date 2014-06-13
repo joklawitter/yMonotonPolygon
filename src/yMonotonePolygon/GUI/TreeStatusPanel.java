@@ -1,13 +1,10 @@
 package yMonotonePolygon.GUI;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.geom.Line2D;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -52,7 +49,6 @@ public class TreeStatusPanel extends JPanel {
 		}
 		
 	}
-	
 	
 	private void drawVertex(Graphics2D g2, Vertex v) {
 		Stroke s = g2.getStroke();
