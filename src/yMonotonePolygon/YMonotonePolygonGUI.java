@@ -306,7 +306,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		sweepStraightLine = new Line2D.Float(0, 0, 500, 0);
 		
 		
-		treeDataStructure.setDataStructure(currentHistory.get(3).getVertexSetOfTree());
+		//treeDataStructure.setDataStructure(currentHistory.get(3).getVertexSetOfTree());
 		
 		//Line2D sweepStraight = new QLineF(0, 0, 500, 0);
 		//sweepStraightLine = new Line2D(sweepStraight, null, sweepLine);
