@@ -2,6 +2,7 @@ package yMonotonePolygon.PraeComputation;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -46,7 +47,7 @@ public class PraeComputer {
 	private SearchTree tree;
 	
 	/** active edges, those crossing the sweep line and pointing down */
-	private TreeSet<Edge> activeEdges;
+	private HashSet<Edge> activeEdges;
 
 	public Polygon getP() {
 		return p;
@@ -99,7 +100,7 @@ public class PraeComputer {
 		tree = new SearchTree();
 		diagonals = new LinkedList<Edge>();
 		history = new LinkedList<SweepLineEvent>();
-		activeEdges = new TreeSet<Edge>();
+		activeEdges = new HashSet<Edge>();
 		
 		
 		// sort vertices y-x-lexicographical
@@ -151,7 +152,7 @@ public class PraeComputer {
 		tree = new SearchTree();
 		diagonals = new LinkedList<Edge>();
 		history = new LinkedList<SweepLineEvent>();
-		activeEdges = new TreeSet<Edge>();
+		activeEdges = new HashSet<Edge>();
 		
 		// sort vertices y-x-lexicographical
 		// - happens automatically with natural ordering and TreeSet
@@ -410,14 +411,13 @@ public class PraeComputer {
 		return helperUpdate;
 	}
 	
-	private TreeSet<Edge> cloneHelper(TreeSet<Edge> toClone) {
-		TreeSet<Edge> cloned = new TreeSet<Edge>();
+	private HashSet<Edge> cloneHelper(HashSet<Edge> toClone) {
+		HashSet<Edge> cloned = new HashSet<Edge>();
 		for (Edge e : toClone) {
 			cloned.add(e.clone());
 		}
 		return cloned;
 	}
-
 
 	/**
 	 * Returns a new color for a edge-helper pair.

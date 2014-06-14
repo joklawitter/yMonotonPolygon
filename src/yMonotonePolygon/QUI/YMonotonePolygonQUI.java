@@ -868,8 +868,9 @@ public class YMonotonePolygonQUI extends QWidget {
 	}
 
 	private SweepLineEvent initSweepLineEvent(Vertex v) {
-		return new SweepLineEvent(v, diagonals.size(), handledVertices,
-				tree.getNodesForY(v.getY()), cloneHelper(activeEdges));
+		return null; 
+		/*return new SweepLineEvent(v, diagonals.size(), handledVertices,
+				tree.getNodesForY(v.getY()), cloneHelper(activeEdges));*/
 	}
 
 	private AddDiagonalSubEvent addDiagonal(Vertex v, Edge edge, int methodline) {

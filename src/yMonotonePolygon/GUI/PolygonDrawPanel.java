@@ -25,6 +25,7 @@ public class PolygonDrawPanel extends JPanel {
 	
 	private static final int POINT_SIZE = 2;
 	private static final int LINE_SIZE = 2;
+	private static final int EVENT_XPOSITION = 15;
 	
 	// whether the panel is in drawing mode or not (drawing new polygon)
 	private boolean inDrawMode = false;
@@ -36,12 +37,18 @@ public class PolygonDrawPanel extends JPanel {
 	private Polygon p;
     private LinkedList<Edge> diagonals;
     private int numberOfDiagonals;
-    private Vertex currentVertex;
-    private TreeSet<Edge> activeEdges;
+    
+    private TreeSet<Vertex> events;
+    private int numberOfHandledEvents;
+    
+	private Vertex currentVertex;
+    private HashSet<Edge> activeEdges;
     
     private Vertex oldHelper;
     private Vertex newHelper;
     private Edge foundEdge;
+
+
     
 	// write everything to paint also in here or get g2 to draw on
 	// if it gets drawn here it will be repainted when windows size is changed
@@ -61,12 +68,26 @@ public class PolygonDrawPanel extends JPanel {
 		} else if (p != null) {
 				drawPolygon(g2);
 				drawDiagonals(g2);
+				drawEvents(g2);
+				
+				if (activeEdges != null) {
+					drawActiveEdgesAndHelper(g2);
+				}
+				
 				if (currentVertex != null) {					
 					drawSweepLine(g2);
 					drawCurrentVertex(g2);
 				}
-				if (activeEdges != null) {
-					drawActiveEdgesAndHelper(g2);
+				
+				if (newHelper != null) {
+					drawVertex(g2, newHelper);
+					if (oldHelper != null) {
+						drawVertex(g2, oldHelper);
+					}
+				}
+				
+				if (foundEdge != null) {
+					signalFoundEdge(g2, foundEdge);
 				}
 		}
 	}
@@ -91,12 +112,18 @@ public class PolygonDrawPanel extends JPanel {
 	public void setNumberOfDiagonals(int numberOfDiagonals) {
 		this.numberOfDiagonals = numberOfDiagonals;
 	}
+    public void setEvents(TreeSet<Vertex> events) {
+		this.events = events;
+	}
+	public void setNumberOfHandledEvents(int numberOfHandledEvents) {
+		this.numberOfHandledEvents = numberOfHandledEvents;
+	}
 	
 	public void setCurrentVertex(Vertex currentVertex) {
 		this.currentVertex = currentVertex;
 	}
 
-	public void setActiveEdges(TreeSet<Edge> activeEdges) {
+	public void setActiveEdges(HashSet<Edge> activeEdges) {
 		this.activeEdges = activeEdges;
 	}
 	
@@ -136,7 +163,7 @@ public class PolygonDrawPanel extends JPanel {
 	private void drawActiveEdgesAndHelper(Graphics2D g2) {
 		Stroke s = g2.getStroke();
 		g2.setStroke(new BasicStroke(LINE_SIZE));
-		//System.out.println(activeEdges.size());
+
 		for (Edge e : activeEdges) {
 			drawLine(g2, e);
 			drawVertex(g2, e.getHelper());
@@ -148,6 +175,38 @@ public class PolygonDrawPanel extends JPanel {
 		for (int i = 0; i < numberOfDiagonals; i++) {
 			drawLine(g2, diagonals.get(i));
 		}
+	}
+
+	private void drawEvents(Graphics2D g2) {
+		g2.setColor(GUIColorConfiguration.HANDLED_EVENT);
+		int i = 0;
+		int oldY = -1;
+		for (Vertex v : events) {
+			if (i == numberOfHandledEvents) { // switch to not current event color
+				g2.setColor(GUIColorConfiguration.CURRENT_EVENT);				
+			}
+			
+			if ((v.getY() == oldY) && (i > numberOfHandledEvents)) {
+				continue; 		// we have more than one event on the current y position, 
+								// to not overdraw the current event, we continue here 
+			}
+			
+			if (i == (numberOfHandledEvents + 1)) {
+				g2.setColor(GUIColorConfiguration.UNHANDLED_EVENT);	
+			}
+			
+			drawEvent(g2, v);
+			
+			oldY = v.getY();
+			i++;
+		}		
+	}
+	
+	private void drawEvent(Graphics2D g2, Vertex v) {
+		Stroke s = g2.getStroke();
+		g2.setStroke(new BasicStroke(3));
+		g2.drawOval(EVENT_XPOSITION, v.getY() - 1, POINT_SIZE, POINT_SIZE);
+		g2.setStroke(s);
 	}
 
 	private void drawLine(Graphics2D g2, Edge edge) {
@@ -164,7 +223,7 @@ public class PolygonDrawPanel extends JPanel {
 		Stroke s = g2.getStroke();
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(v.getColor());
-		g2.drawOval(v.getX() - 1, v.getY() - 1, POINT_SIZE, POINT_SIZE);
+		g2.drawOval(v.getX(), v.getY(), POINT_SIZE, POINT_SIZE);
 		g2.setStroke(s);
 	}
 
@@ -176,6 +235,10 @@ public class PolygonDrawPanel extends JPanel {
 		g2.drawLine(5, atY, this.getWidth() - 5, atY);		
 		g2.setStroke(s);		
 	}
+	
+	private void signalFoundEdge(Graphics2D g2, Edge foundEdge2) {
+		
+	}	
 	
 	public void clear() {
 		inDrawMode = false;
@@ -189,15 +252,20 @@ public class PolygonDrawPanel extends JPanel {
 	    numberOfDiagonals  = 0;
 	    currentVertex  = null;
 	    activeEdges  = null;
+	    this.events = null;
+	    numberOfHandledEvents = -1;
 	    
 		repaint();
 	}
 
 	// -- methods for during drawing mode! -- just for drawing mode! --
 	public void drawPoint(int x, int y) {
-		drawingPoints.add(new Point(x, y));
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		g2.drawOval(x - 1, y - 1, POINT_SIZE, POINT_SIZE);
+		Stroke s = g2.getStroke();
+		g2.setStroke(new BasicStroke(3));
+		drawingPoints.add(new Point(x, y));
+		g2.drawOval(x, y, POINT_SIZE, POINT_SIZE);
+		g2.setStroke(s);
 	}
 
 	public void drawLine(int x, int y, int i, int j) {

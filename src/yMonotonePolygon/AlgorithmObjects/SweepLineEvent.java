@@ -1,5 +1,6 @@
 package yMonotonePolygon.AlgorithmObjects;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -12,7 +13,7 @@ public class SweepLineEvent {
 	
 	// second, update binary search tree & the corresponding edge-helper-pairs
 	private TreeSet<Vertex> vertexSetOfTree;
-	private TreeSet<Edge> activeEdges;
+	private HashSet<Edge> activeEdges;
 	
 	// third , display correct method
 	private Vertex vertex;
@@ -22,7 +23,7 @@ public class SweepLineEvent {
 	
 	
 	public SweepLineEvent(Vertex v, int numberOfDiagonals, int numberOfHandledVertices, 
-			TreeSet<Vertex> vertexSetOfTree, TreeSet<Edge> activeEdges) {
+			TreeSet<Vertex> vertexSetOfTree, HashSet<Edge> activeEdges) {
 		this.vertex = v;
 		this.numberOfDiagonals = numberOfDiagonals;
 		this.numberOfHandledVertices = numberOfHandledVertices;
@@ -62,7 +63,7 @@ public class SweepLineEvent {
 		return vertexSetOfTree;
 	}
 
-	public TreeSet<Edge> getActiveEdges() {
+	public HashSet<Edge> getActiveEdges() {
 		return activeEdges;
 	}
 	

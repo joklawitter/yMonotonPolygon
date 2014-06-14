@@ -16,6 +16,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -96,7 +97,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
     private int handledVertices;
 
     /** active edges, those crossing the sweep line and pointing down */
-    private TreeSet<Edge> activeEdges;
+    private HashSet<Edge> activeEdges;
     
     /** binary search tree of the active edges */
     //private SearchTree tree;
@@ -304,13 +305,19 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		currentHistory = praeComputer.getHistory();
 		diagonals = praeComputer.getDiagonals();
 		sweepLine.setDiagonals(diagonals);
+		sweepLine.setEvents(praeComputer.getVertices());
+		polygonSet = true;
 		
 		/*SweepLineEvent s = currentHistory.get(3);
 		treeDataStructure.setDataStructure(s.getVertexSetOfTree());
 		treeDataStructure.repaint();
 		sweepLine.setCurrentVertex(s.getVertex());
 		sweepLine.setNumberOfDiagonals(diagonals.size());
-		sweepLine.setActiveEdges(s.getActiveEdges());*/
+		sweepLine.setActiveEdges(s.getActiveEdges());
+		sweepLine.setNumberOfHandledEvents(s.getNumberOfHandledVertices());*/
+		
+		
+		sweepLine.repaint();
 	}
 	
 	private void resetSlider() {
@@ -819,9 +826,7 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 	private void setDrawMode() {
 		// clear current 
 		sweepLine.clear();
-		
-    	// set border of main panel red to signal that we are in draw mode
-		// TODO ... 
+		polygonSet = false;
 		
     	// set text in method field to instructions:
     	// - click to set new point
