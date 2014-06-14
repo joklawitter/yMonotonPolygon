@@ -1,6 +1,10 @@
 package yMonotonePolygon.GUI;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Line2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -23,8 +27,28 @@ public class MethodPanel extends JPanel {
 	private JPanel linesContainerPanel;
 	private JTextPane[] lines;
 	
+	private int trueLine;
+	private int falseLine;
+	private int highlightedLine;	
+	
 	public MethodPanel() {
 		init();
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		
+		if (trueLine >= 0) {
+			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
+		}
+		if (falseLine >= 0) {
+			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);		
+		}
+		if (highlightedLine >= 0) {
+			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
+		}
 	}
 	
 	private void init() {
@@ -68,8 +92,9 @@ public class MethodPanel extends JPanel {
 		setTextlines();
 	}
 	
-	
 	private void setTextlines() {
+		resetLines();
+		
 		linesContainerPanel.removeAll();
 		lines = new JTextPane[MAX_NUMBER_LINES];
 		for (int i = 0; i < MAX_NUMBER_LINES; i++) {
@@ -84,27 +109,38 @@ public class MethodPanel extends JPanel {
 	}
 
 	public void setMethod(Method method) {
+		resetLines();
+
 		this.method = method;
 		setTitle(method.getName());
 		setTextlines(method.getLines());
 	}
 
-	
+	private void resetLines() {
+		trueLine = -1;
+		falseLine = -1;
+		highlightedLine = -1;
+	}
+
 	// -- visualization features -- visualization features --
 	
 	public void highlightLine(int lineNumber) {
 		checkLineNumber(lineNumber);
-		// TODO highlight the line at the given number
+		highlightedLine =  lineNumber;
+		lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
 	}
 
 	public void setBooleanLineTrue(int lineNumber) {
 		checkLineNumber(lineNumber);
-		// TODO set the line green to show that their outcome was true
+		trueLine = lineNumber;
+		
+		lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 	}
 	
 	public void setBooleanLineFalse(int lineNumber) {
 		checkLineNumber(lineNumber);
-		// TODO set the line red to show that their outcome was false
+		falseLine = lineNumber;
+		lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);	
 	}
 	
 	public void grayOutLine(int lineNumber) {
@@ -114,7 +150,7 @@ public class MethodPanel extends JPanel {
 	
 	// -- test helper methods -- check helper methods --
 	private void checkTextlinesSize(int length) {
-		if (length >= MAX_NUMBER_LINES) {
+		if (length > MAX_NUMBER_LINES) {
 			throw new IllegalArgumentException("To many lines to display in method section.");
 		}
 	}

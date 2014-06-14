@@ -314,7 +314,12 @@ public class YMonotonePolygonGUI extends JFrame  implements ActionListener, Mous
 		sweepLine.setCurrentVertex(s.getVertex());
 		sweepLine.setNumberOfDiagonals(diagonals.size());
 		sweepLine.setActiveEdges(s.getActiveEdges());
-		sweepLine.setNumberOfHandledEvents(s.getNumberOfHandledVertices());*/
+		sweepLine.setNumberOfHandledEvents(s.getNumberOfHandledVertices());
+		methodPanel.setMethod(Method.HANDLE_MERGE);
+		
+		methodPanel.highlightLine(0);
+		methodPanel.setBooleanLineTrue(1);
+		methodPanel.setBooleanLineFalse(2);*/
 		
 		
 		sweepLine.repaint();

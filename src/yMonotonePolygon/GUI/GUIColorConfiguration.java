@@ -28,6 +28,13 @@ public final class GUIColorConfiguration {
 	
 	public static final Color DATASTRUCTURE_BACKGROUND = Color.GRAY;
 
+	// colors for lines in method
+	public static final Color TRUE_LINE = Color.GREEN;
+	public static final Color FALSE_LINE = Color.RED;
+	public static final Color HIGHLIGHTED_LINE = Color.GRAY;
+	
+	
+	
 	public static final ArrayList<Color> COLORS;
 	
 	static {
