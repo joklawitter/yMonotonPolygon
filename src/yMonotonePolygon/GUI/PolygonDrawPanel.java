@@ -104,6 +104,7 @@ public class PolygonDrawPanel extends JPanel {
 		inDrawMode = false;
 		this.p = p;
 	}
+	
 
 	public void setDiagonals(LinkedList<Edge> diagonals) {
 		this.diagonals = diagonals;
@@ -158,6 +159,10 @@ public class PolygonDrawPanel extends JPanel {
 		g2.fillPolygon(p);
 		g2.setColor(GUIColorConfiguration.EDGE_STD_COLOR);
 		g2.drawPolygon(p);
+		for (int i = 0; i < p.npoints; i++) {
+		    drawVertex(g2, new Vertex(p.xpoints[i], p.ypoints[i], Color.black));
+		    drawSweepLineEvent(g2, p.ypoints[i]);
+		}
 	}
 	
 	private void drawActiveEdgesAndHelper(Graphics2D g2) {
@@ -227,6 +232,14 @@ public class PolygonDrawPanel extends JPanel {
 		g2.setStroke(s);
 	}
 
+	private void drawSweepLineEvent(Graphics2D g2, int yPos) {
+	    Stroke s = g2.getStroke();
+	    g2.setStroke(new BasicStroke(3));
+	    g2.setColor(Color.black);
+	    g2.drawRect(5, yPos - 1, POINT_SIZE, POINT_SIZE);
+	    g2.setStroke(s);
+	}
+	
 	private void drawSweepLine(Graphics2D g2) {
 		Stroke s = g2.getStroke();
 		g2.setStroke(new BasicStroke(1));
