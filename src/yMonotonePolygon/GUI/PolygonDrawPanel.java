@@ -71,13 +71,23 @@ public class PolygonDrawPanel extends JPanel {
 				drawEvents(g2);
 				
 				if (activeEdges != null) {
-					drawActiveEdgesAndHelper(g2);
+					drawActiveEdges(g2);
 				}
+				
+				// has to be drawn after active Edges
+				drawVertices(g2);
+				
+				if (activeEdges != null) {
+					drawActiveEdgesHelper(g2);
+				}
+				
+				// but before helper
 				
 				if (currentVertex != null) {					
 					drawSweepLine(g2);
 					drawCurrentVertex(g2);
 				}
+				
 				
 				if (newHelper != null) {
 					drawVertex(g2, newHelper);
@@ -140,6 +150,18 @@ public class PolygonDrawPanel extends JPanel {
 		this.foundEdge = foundEdge;
 	}
 	
+	public void reset(Vertex vertex) {
+		this.setCurrentVertex(vertex);
+		this.setNumberOfDiagonals(0);
+		this.setActiveEdges(null);
+		this.resetFoundEdge();
+		this.resetNewHelper();
+		this.resetOldHelper();
+		this.setNumberOfHandledEvents(0);
+		
+		this.repaint();
+	}
+	
 	public void resetOldHelper() {
 		this.oldHelper = null;
 	}
@@ -159,21 +181,29 @@ public class PolygonDrawPanel extends JPanel {
 		g2.fillPolygon(p);
 		g2.setColor(GUIColorConfiguration.EDGE_STD_COLOR);
 		g2.drawPolygon(p);
+	}
+
+	private void drawVertices(Graphics2D g2) {
 		for (int i = 0; i < p.npoints; i++) {
-		    drawVertex(g2, new Vertex(p.xpoints[i], p.ypoints[i], Color.black));
-		    drawSweepLineEvent(g2, p.ypoints[i]);
+		    drawVertex(g2, new Vertex(p.xpoints[i], p.ypoints[i], GUIColorConfiguration.EDGE_STD_COLOR));
+		    //drawSweepLineEvent(g2, p.ypoints[i]);
 		}
 	}
 	
-	private void drawActiveEdgesAndHelper(Graphics2D g2) {
+	private void drawActiveEdges(Graphics2D g2) {
 		Stroke s = g2.getStroke();
 		g2.setStroke(new BasicStroke(LINE_SIZE));
 
 		for (Edge e : activeEdges) {
 			drawLine(g2, e);
-			drawVertex(g2, e.getHelper());
 		}
 		g2.setStroke(s);
+	}
+	
+	private void drawActiveEdgesHelper(Graphics2D g2) {	
+		for (Edge e : activeEdges) {
+			drawVertex(g2, e.getHelper());
+		}
 	}
 
 	private void drawDiagonals(Graphics2D g2) {
@@ -186,18 +216,20 @@ public class PolygonDrawPanel extends JPanel {
 		g2.setColor(GUIColorConfiguration.HANDLED_EVENT);
 		int i = 0;
 		int oldY = -1;
+		Vertex currentEventVertex = null;
 		for (Vertex v : events) {
 			if (i == numberOfHandledEvents) { // switch to not current event color
-				g2.setColor(GUIColorConfiguration.CURRENT_EVENT);				
+				currentEventVertex = v; // store the current event vertex to draw it last (so that it lies on top)
+				oldY = currentEventVertex.getY();
+				g2.setColor(GUIColorConfiguration.UNHANDLED_EVENT);
+				i++;
+				continue;
 			}
 			
 			if ((v.getY() == oldY) && (i > numberOfHandledEvents)) {
+				i++;
 				continue; 		// we have more than one event on the current y position, 
 								// to not overdraw the current event, we continue here 
-			}
-			
-			if (i == (numberOfHandledEvents + 1)) {
-				g2.setColor(GUIColorConfiguration.UNHANDLED_EVENT);	
 			}
 			
 			drawEvent(g2, v);
@@ -205,12 +237,17 @@ public class PolygonDrawPanel extends JPanel {
 			oldY = v.getY();
 			i++;
 		}		
+		
+		if (currentEventVertex != null) { // at last draw the current Event
+			g2.setColor(GUIColorConfiguration.CURRENT_EVENT);
+			drawEvent(g2, currentEventVertex);			
+		}
 	}
 	
 	private void drawEvent(Graphics2D g2, Vertex v) {
 		Stroke s = g2.getStroke();
 		g2.setStroke(new BasicStroke(3));
-		g2.drawOval(EVENT_XPOSITION, v.getY() - 1, POINT_SIZE, POINT_SIZE);
+		g2.drawRect(EVENT_XPOSITION, v.getY() - 1, POINT_SIZE, POINT_SIZE);
 		g2.setStroke(s);
 	}
 
@@ -232,13 +269,13 @@ public class PolygonDrawPanel extends JPanel {
 		g2.setStroke(s);
 	}
 
-	private void drawSweepLineEvent(Graphics2D g2, int yPos) {
+	/*private void drawSweepLineEvent(Graphics2D g2, int yPos) {
 	    Stroke s = g2.getStroke();
 	    g2.setStroke(new BasicStroke(3));
 	    g2.setColor(Color.black);
 	    g2.drawRect(5, yPos - 1, POINT_SIZE, POINT_SIZE);
 	    g2.setStroke(s);
-	}
+	}*/
 	
 	private void drawSweepLine(Graphics2D g2) {
 		Stroke s = g2.getStroke();

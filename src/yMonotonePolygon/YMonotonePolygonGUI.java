@@ -307,15 +307,22 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         currentHistory = praeComputer.getHistory();
         diagonals = praeComputer.getDiagonals();
         sweepLine.setDiagonals(diagonals);
+        sweepLine.setEvents(praeComputer.getVertices());
+		polygonSet = true;
 
-        /*
-         * SweepLineEvent s = currentHistory.get(3);
-         * treeDataStructure.setDataStructure(s.getVertexSetOfTree());
-         * treeDataStructure.repaint();
-         * sweepLine.setCurrentVertex(s.getVertex());
-         * sweepLine.setNumberOfDiagonals(diagonals.size());
-         * sweepLine.setActiveEdges(s.getActiveEdges());
-         */
+		// use ctrl + "/" to un-/comment whole block (in eclipse)
+//		SweepLineEvent s = currentHistory.get(3);
+//		treeDataStructure.setDataStructure(s.getVertexSetOfTree());
+//		treeDataStructure.repaint();
+//		sweepLine.setCurrentVertex(s.getVertex());
+//		sweepLine.setNumberOfDiagonals(s.getNumberOfDiagonals());
+//		sweepLine.setActiveEdges(s.getActiveEdges());
+//		sweepLine.setNumberOfHandledEvents(s.getNumberOfHandledVertices());
+//		methodPanel.setMethod(Method.HANDLE_MERGE);
+//		
+//		methodPanel.highlightLine(0);
+//		methodPanel.setBooleanLineTrue(1);
+//		methodPanel.setBooleanLineFalse(2);
     }
 
     private void resetSlider() {
@@ -353,7 +360,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         if (inDrawMode) {
             int eX = e.getX();
             int eY = e.getY();
-            if (p.npoints > 3) {
+            if (p.npoints >= 3) {
                 int x = p.xpoints[0];
                 int y = p.ypoints[0];
 
@@ -446,13 +453,9 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void reset() {
         currentSLPosition = 0;
         currentLinePosition = 0;
-        sweepLine.setDiagonals(null);
-        sweepLine.setActiveEdges(null);
-        sweepLine.setCurrentVertex(praeComputer.getHistory().get(0).getVertex());
-        sweepLine.setFoundEdge(null);
-        sweepLine.repaint();
-        // TODO Auto-generated method stub
-
+        //sweepLine.setDiagonals(null); // do not set diagonals null, just set the number of painted to zero
+        sweepLine.reset(praeComputer.getHistory().get(0).getVertex());        
+        treeDataStructure.reset();
     }
 
     public void skipBackClicked() {
@@ -623,6 +626,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 		// clear current 
 		sweepLine.clear();
 		polygonSet = false;
+		treeDataStructure.reset();		
 		
     	// set text in method field to instructions:
     	// - click to set new point
@@ -642,6 +646,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         inDrawMode = false;
         if (p.npoints >= 3) {
             initAlgorithm(p);
+        } else { // clear the previous drawn stuff (2 points and one edge)
+        	sweepLine.clear();
         }
 
         System.out.println("");
