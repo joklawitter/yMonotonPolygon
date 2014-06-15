@@ -672,5 +672,5 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // init algorithm
         initAlgorithm(p);
     }
-
+ 
 }
