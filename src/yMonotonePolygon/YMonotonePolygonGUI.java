@@ -1,12 +1,7 @@
 package yMonotonePolygon;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,50 +13,22 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.trolltech.qt.core.QRectF;
-import com.trolltech.qt.core.Qt;
-import com.trolltech.qt.core.Qt.Orientation;
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QBrush;
-import com.trolltech.qt.gui.QButtonGroup;
-import com.trolltech.qt.gui.QColor;
-import com.trolltech.qt.gui.QGraphicsEllipseItem;
-import com.trolltech.qt.gui.QGraphicsLineItem;
-import com.trolltech.qt.gui.QGraphicsScene;
-import com.trolltech.qt.gui.QGridLayout;
-import com.trolltech.qt.gui.QLabel;
-import com.trolltech.qt.gui.QLineF;
-import com.trolltech.qt.gui.QPen;
-import com.trolltech.qt.gui.QPolygonF;
-import com.trolltech.qt.gui.QPushButton;
-import com.trolltech.qt.gui.QSlider;
-
-import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
-import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.Method;
-import yMonotonePolygon.AlgorithmObjects.SearchSubEvent;
-import yMonotonePolygon.AlgorithmObjects.SearchTree;
 import yMonotonePolygon.AlgorithmObjects.SubEvent;
 import yMonotonePolygon.AlgorithmObjects.SweepLineEvent;
-import yMonotonePolygon.AlgorithmObjects.UpdateDeletionTreeSubEvent;
-import yMonotonePolygon.AlgorithmObjects.UpdateHelperSubEvent;
-import yMonotonePolygon.AlgorithmObjects.UpdateInsertTreeSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
-import yMonotonePolygon.AlgorithmObjects.VertexType;
 import yMonotonePolygon.GUI.MethodPanel;
 import yMonotonePolygon.GUI.PolygonDrawPanel;
 import yMonotonePolygon.GUI.TreeStatusPanel;
@@ -421,6 +388,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                 methodPanel.setMethod(sle.getMethod());
                 methodPanel.setTextlines(sle.getMethod().getLines());
             }
+            sweepLine.setCurrentVertex(sle.getVertex());
+            sweepLine.setNumberOfDiagonals(sle.getNumberOfDiagonals());
+            sweepLine.setNumberOfHandledEvents(sle.getNumberOfHandledVertices());
+            sweepLine.setActiveEdges(sle.getActiveEdges());
             sweepLine.repaint();
         }
         /*
@@ -456,6 +427,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         //sweepLine.setDiagonals(null); // do not set diagonals null, just set the number of painted to zero
         sweepLine.reset(praeComputer.getHistory().get(0).getVertex());        
         treeDataStructure.reset();
+        SweepLineEvent sle = praeComputer.getHistory().get(0);
+        sweepLine.setCurrentVertex(sle.getVertex());
+        sweepLine.setNumberOfDiagonals(sle.getNumberOfDiagonals());
+        sweepLine.setNumberOfHandledEvents(sle.getNumberOfHandledVertices());
+        sweepLine.setActiveEdges(sle.getActiveEdges());
     }
 
     public void skipBackClicked() {
@@ -469,7 +445,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         currentLinePosition = praeComputer.getHistory().get(currentSLPosition).getSubEvents().size() - 1;
         currentLinePosition = (currentLinePosition < 0) ? 0 : currentLinePosition;
         sweepLine.setDiagonals(praeComputer.getDiagonals());
+        sweepLine.setNumberOfDiagonals(praeComputer.getHistory().get(currentSLPosition).getNumberOfDiagonals());
         sweepLine.setCurrentVertex(praeComputer.getHistory().getLast().getVertex());
+        sweepLine.setNumberOfHandledEvents(praeComputer.getHistory().get(currentSLPosition).getNumberOfHandledVertices());
+        sweepLine.setActiveEdges(praeComputer.getHistory().get(currentSLPosition).getActiveEdges());
         sweepLine.repaint();
         // TODO Auto-generated method stub
 
@@ -487,10 +466,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     public void lineDownClicked() {
-        if (currentSLPosition < praeComputer.getHistory().size() - 2) {
+        if (currentSLPosition < praeComputer.getHistory().size() - 1) {
             skipToNextEvent();
         } else {
-            currentSLPosition = praeComputer.getHistory().size() - 1;
+            currentSLPosition = praeComputer.getHistory().size();
         }
         sweepLine.repaint();
 
@@ -507,25 +486,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         methodPanel.setMethod(sle.getMethod());
         methodPanel.setTextlines(sle.getMethod().getLines());
         sweepLine.setCurrentVertex(sle.getVertex());
-        /*
-         * markedVertex.setPos(sle.getVertex().getX() + 2.5,
-         * sle.getVertex().getY() + 2.5); markedVertex.setPen(new QPen(new
-         * QColor(sle.getVertex().getColor().getRGB())));
-         * markedVertex.setBrush(new QBrush(new
-         * QColor(sle.getVertex().getColor().getRGB()))); diagonalItems.clear();
-         */
-
-        for (int i = 0; i < sle.getNumberOfDiagonals(); i++) {
-            // QGraphicsLineItem tmp = new
-            // QGraphicsLineItem(praeComputer.getDiagonals().get(i).getStartVertex().getX(),
-            // praeComputer.getDiagonals().get(i).getStartVertex().getY(),
-            // praeComputer.getDiagonals().get(i).getEndVertex().getX(),
-            // praeComputer.getDiagonals().get(i).getEndVertex().getY(), null,
-            // sweepLine);
-            // diagonalItems.add(tmp);
-        }
-        // TODO check if there is a next vertex and if start sweepline in first
-        // line
+        sweepLine.setNumberOfDiagonals(sle.getNumberOfDiagonals());
+        sweepLine.setNumberOfHandledEvents(sle.getNumberOfHandledVertices());
+        sweepLine.setActiveEdges(sle.getActiveEdges());
+        
+        repaint();
 
     }
 
@@ -538,6 +503,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         methodPanel.setMethod(sle.getMethod());
         methodPanel.setTextlines(sle.getMethod().getLines());
         sweepLine.setCurrentVertex(sle.getVertex());
+        sweepLine.setNumberOfDiagonals(sle.getNumberOfDiagonals());
+        sweepLine.setNumberOfHandledEvents(sle.getNumberOfHandledVertices());
+        sweepLine.setActiveEdges(sle.getActiveEdges());
+        repaint();
         // TODO check if there is a prev vertex and if start sweepline in FIRST
         // line of it
 
@@ -552,6 +521,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             currentSubEvents = sle.getSubEvents();
             methodPanel.setMethod(sle.getMethod());
             methodPanel.setTextlines(sle.getMethod().getLines());
+            sweepLine.setCurrentVertex(sle.getVertex());
+            sweepLine.setNumberOfDiagonals(sle.getNumberOfDiagonals());
+            sweepLine.setNumberOfHandledEvents(sle.getNumberOfHandledVertices());
+            sweepLine.setActiveEdges(sle.getActiveEdges());
         } else {
             currentSLPosition = 0;
             currentLinePosition = 0;
@@ -559,6 +532,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // TODO check if there is a prev vertex and if start sweepline in LAST
         // line of it
 
+        repaint();
     }
 
     private void handleSubEvent(SubEvent subEvent) {
@@ -595,8 +569,13 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                         @Override
                         public void run() {
                             stepForwardClicked();
-                            time = velocity.getValue() * 1000;
+                            time = 1 / velocity.getValue() * 1000;
                             System.out.println("time " + time);
+                            if (currentSLPosition == praeComputer.getHistory().size() - 1) {
+                                isPaused = true;
+                                play.setText("Play");
+                                play.setToolTipText("Automatically step through algorithm.");
+                            }
                         }
                     });
 
