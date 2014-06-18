@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.util.HashSet;
@@ -54,7 +55,8 @@ public class PolygonDrawPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 		if (inDrawMode) {
 			drawRedBorder(g2);		
 			for (Point p : drawingPoints) {
@@ -292,7 +294,13 @@ public class PolygonDrawPanel extends JPanel {
 	
 	private void drawSweepLine(Graphics2D g2) {
 		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(1));
+		float[] dash1 = { 2f, 0f, 2f };
+		g2.setStroke(new BasicStroke(1, 
+		        BasicStroke.CAP_BUTT, 
+		        BasicStroke.JOIN_ROUND, 
+		        1.0f, 
+		        dash1,
+		        2f));
 		g2.setColor(GUIColorConfiguration.SWEEP_LINE);
 		int atY = currentVertex.getY();
 		g2.drawLine(5, atY, this.getWidth() - 5, atY);		

@@ -214,7 +214,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         methodPanel = new MethodPanel();
         methodPanel.setMaximumSize(new Dimension(10000, 200));
         methodPanel.setPreferredSize(new Dimension(600, 200));
-        methodPanel.setMinimumSize(new Dimension(1, 100));
+        methodPanel.setMinimumSize(new Dimension(600, 200));
     }
 
     // -- initialize algorithm -- reset -- initialize algorithm -- reset --
@@ -308,6 +308,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             public void run() {
                 while (!isPaused) {
                 	stepForwardClicked();
+                	repaint();
+                	methodPanel.repaint();
                     time = (int) (1.0 / (double) velocity.getValue() * 2000.0);
                     System.out.println("time " + time);
                     if (currentSLPosition == currentHistory.size() - 1) {
@@ -420,7 +422,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         treeDataStructure.setDataStructure(currentSweepLineEvent.getVertexSetOfTree());
       
         methodPanel.setMethod(currentSweepLineEvent.getMethod());
-
+        
         repaint();
     }
 

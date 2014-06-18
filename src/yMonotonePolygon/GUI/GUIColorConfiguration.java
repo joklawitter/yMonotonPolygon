@@ -10,7 +10,7 @@ public final class GUIColorConfiguration {
 	
 	public static final Color VERTEX_STD_COLOR = Color.BLACK;
 	
-	public static final Color POLYGON_BACKGROUND = Color.GRAY;
+	public static final Color POLYGON_BACKGROUND = Color.LIGHT_GRAY;
 	
 	public static final Color POLYGON_INSIDE = Color.WHITE;
 	
@@ -26,7 +26,7 @@ public final class GUIColorConfiguration {
 	
 	public static final Color SWEEP_LINE = Color.RED; // TODO: or something else + dotted/dashed?
 	
-	public static final Color DATASTRUCTURE_BACKGROUND = Color.GRAY;
+	public static final Color DATASTRUCTURE_BACKGROUND = Color.WHITE;
 	
 	public static final Color METHOD_BACKGROUND = Color.WHITE;
 	
