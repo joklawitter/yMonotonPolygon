@@ -226,7 +226,7 @@ public class YMonotonePolygonQUI extends QWidget {
 		g.setBrush(new QBrush(QColor.white));
 		g.setFlag(GraphicsItemFlag.ItemIsMovable, false);
 		g.setFlag(GraphicsItemFlag.ItemStacksBehindParent, false);
-		praeComputer.work(points2);
+		//praeComputer.work(points2);
 		currentState = praeComputer.getHistory();
 		currentHistory = new LinkedList<SweepLineEvent>();
 		currentVertices = new ArrayList<Vertex>(praeComputer.getVertices());
@@ -883,9 +883,9 @@ public class YMonotonePolygonQUI extends QWidget {
 		diagonal.setPen(new QPen(QColor.darkBlue));
 		System.out.println("diagonal");
 
-		AddDiagonalSubEvent addDiagonalEvent = new AddDiagonalSubEvent(2,
-				newDiagonal);
-		return addDiagonalEvent;
+		//AddDiagonalSubEvent addDiagonalEvent = new AddDiagonalSubEvent(2,
+		//		newDiagonal);
+		return null;
 	}
 
 	private UpdateDeletionTreeSubEvent deleteEdgeFromTree(Edge toDelete,
@@ -894,10 +894,10 @@ public class YMonotonePolygonQUI extends QWidget {
 		tree.delete(toDelete);
 		boolean b = activeEdges.remove(toDelete);
 		System.out.println("active edges " + b);
-		UpdateDeletionTreeSubEvent deletionEvent = new UpdateDeletionTreeSubEvent(
-				methodline, tree.getNodesForY(toDelete.getEndVertex().getY()),
-				toDelete, oldHelper);
-		return deletionEvent;
+		//UpdateDeletionTreeSubEvent deletionEvent = new UpdateDeletionTreeSubEvent(
+		//		methodline, tree.getNodesForY(toDelete.getEndVertex().getY()),
+		//		toDelete, oldHelper);
+		return null;
 	}
 
 	private UpdateInsertTreeSubEvent insertEdgeInTree(Edge toInsert,
@@ -914,11 +914,12 @@ public class YMonotonePolygonQUI extends QWidget {
 		leftMarkedEdge.setLine(toInsert.getStartVertex().getX(), toInsert
 				.getStartVertex().getY(), toInsert.getEndVertex().getX(),
 				toInsert.getEndVertex().getY());
-		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(
-				methodline,
-				tree.getNodesForY(toInsert.getStartVertex().getY()),
-				toInsert.clone());
-		return treeUpdate;
+//		UpdateInsertTreeSubEvent treeUpdate = new UpdateInsertTreeSubEvent(
+//				methodline,
+//				tree.getNodesForY(toInsert.getStartVertex().getY()),
+//				toInsert.clone());
+//		return treeUpdate;
+		return null;
 	}
 
 	/**

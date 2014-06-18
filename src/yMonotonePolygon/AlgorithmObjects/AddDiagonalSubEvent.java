@@ -2,14 +2,14 @@ package yMonotonePolygon.AlgorithmObjects;
 
 public class AddDiagonalSubEvent extends SubEvent{
 
-	private Edge diagonal; 
+	private int newNumberOfDiagonals; 
 	
-	public AddDiagonalSubEvent(int methodLine, Edge diagonal) {
+	public AddDiagonalSubEvent(int methodLine, int newNumberOfDiagonals) {
 		super(methodLine);
-		this.diagonal = diagonal;
+		this.newNumberOfDiagonals = newNumberOfDiagonals;
 	}
 
-	public Edge getDiagonal() {
-		return diagonal;
+	public int getNewNumberOfDiagonals() {
+		return newNumberOfDiagonals;
 	}
 }

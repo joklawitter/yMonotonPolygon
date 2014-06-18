@@ -51,7 +51,10 @@ public enum Method {
 	ERROR ("Illegal Polygon",
 			new String[]
 					{"The polygon may not intersect itself!",
-					"File must be in correct format!"});
+					"File must be in correct format!"}),
+	START ("Y-Monotone Polygon Algorithm",
+			new String[]
+					{"TODO"});
 	
 	private final String name;
 	private final String[] lines;

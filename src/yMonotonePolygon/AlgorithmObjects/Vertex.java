@@ -46,6 +46,9 @@ public class Vertex implements Comparable<Vertex> {
 		return color;
 	}
 
+	public void setColor(Color color) {
+		this.color = color;
+	}
 	
 	// checking the type
 	public VertexType getVertexType() {
@@ -91,7 +94,6 @@ public class Vertex implements Comparable<Vertex> {
 		this.next = next;
 	}
 	
-	
 	public Edge getPrevEdge() {
 		return prevEdge;
 	}
@@ -134,7 +136,6 @@ public class Vertex implements Comparable<Vertex> {
 		
 		return true;		
 	}
-
 
 
 	public void setHelpedEdge(Edge e) {

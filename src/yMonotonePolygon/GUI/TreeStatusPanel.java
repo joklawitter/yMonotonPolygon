@@ -69,7 +69,6 @@ public class TreeStatusPanel extends JPanel {
 		this.searchPoint = null;
 	}
 
-	
 	public void reset() {
 		vertices = null;
 		searchPoint = null;

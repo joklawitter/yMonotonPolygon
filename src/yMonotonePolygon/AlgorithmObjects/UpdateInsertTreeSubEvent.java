@@ -1,5 +1,6 @@
 package yMonotonePolygon.AlgorithmObjects;
 
+import java.util.HashSet;
 import java.util.TreeSet;
 
 
@@ -11,8 +12,9 @@ public class UpdateInsertTreeSubEvent extends UpdateTreeSubEvent {
 	 */
 	private final Edge newEdge;
 	
-	public UpdateInsertTreeSubEvent(int methodLine, TreeSet<Vertex> updatedVerticesOfTree, Edge newEdge) {
-		super(methodLine, updatedVerticesOfTree);
+	public UpdateInsertTreeSubEvent(int methodLine, TreeSet<Vertex> updatedVerticesOfTree,
+			 HashSet<Edge> activeEdges, Edge newEdge) {
+		super(methodLine, updatedVerticesOfTree, activeEdges);
 		this.newEdge = newEdge;
 	}
 

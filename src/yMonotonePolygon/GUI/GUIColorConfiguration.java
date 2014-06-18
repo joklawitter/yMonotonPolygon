@@ -27,6 +27,9 @@ public final class GUIColorConfiguration {
 	public static final Color SWEEP_LINE = Color.RED; // TODO: or something else + dotted/dashed?
 	
 	public static final Color DATASTRUCTURE_BACKGROUND = Color.GRAY;
+	
+	public static final Color METHOD_BACKGROUND = Color.WHITE;
+	
 
 	// colors for lines in method
 	public static final Color TRUE_LINE = Color.GREEN;

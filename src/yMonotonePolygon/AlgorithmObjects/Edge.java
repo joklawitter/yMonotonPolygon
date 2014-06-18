@@ -36,6 +36,7 @@ public class Edge implements Comparable<Edge> {
 	public void setHelper(Vertex helper) {
 		releaseHelper();
 		this.helper = helper;
+		this.helper.setColor(getColor());
 		helper.setHelpedEdge(this);
 	}
 

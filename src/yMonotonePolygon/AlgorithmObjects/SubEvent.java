@@ -10,4 +10,8 @@ public abstract class SubEvent {
 		super();
 		this.methodLine = methodLine;
 	}
+	
+	public int getLine() {
+		return methodLine - 1;
+	}
 }

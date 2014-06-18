@@ -36,10 +36,10 @@ public class PolygonDrawPanel extends JPanel {
 	// attributes 
 	private Polygon p;
     private LinkedList<Edge> diagonals;
-    private int numberOfDiagonals;
+    private int numberOfDiagonals = 0;
     
     private TreeSet<Vertex> events;
-    private int numberOfHandledEvents;
+    private int numberOfHandledEvents = -1;
     
 	private Vertex currentVertex;
     private HashSet<Edge> activeEdges;
@@ -48,8 +48,6 @@ public class PolygonDrawPanel extends JPanel {
     private Vertex newHelper;
     private Edge foundEdge;
 
-
-    
 	// write everything to paint also in here or get g2 to draw on
 	// if it gets drawn here it will be repainted when windows size is changed
 	@Override
@@ -115,7 +113,6 @@ public class PolygonDrawPanel extends JPanel {
 		this.p = p;
 	}
 	
-
 	public void setDiagonals(LinkedList<Edge> diagonals) {
 		this.diagonals = diagonals;
 	}
@@ -123,9 +120,11 @@ public class PolygonDrawPanel extends JPanel {
 	public void setNumberOfDiagonals(int numberOfDiagonals) {
 		this.numberOfDiagonals = numberOfDiagonals;
 	}
-    public void setEvents(TreeSet<Vertex> events) {
+    
+	public void setEvents(TreeSet<Vertex> events) {
 		this.events = events;
 	}
+
 	public void setNumberOfHandledEvents(int numberOfHandledEvents) {
 		this.numberOfHandledEvents = numberOfHandledEvents;
 	}
@@ -150,16 +149,25 @@ public class PolygonDrawPanel extends JPanel {
 		this.foundEdge = foundEdge;
 	}
 	
-	public void reset(Vertex vertex) {
-		this.setCurrentVertex(vertex);
+	public void reset() {
 		this.setNumberOfDiagonals(0);
 		this.setActiveEdges(null);
-		this.resetFoundEdge();
-		this.resetNewHelper();
-		this.resetOldHelper();
-		this.setNumberOfHandledEvents(0);
+		this.setCurrentVertex(null);
+		this.resetSearchAndHelper();
+		this.setNumberOfHandledEvents(-1);
+		this.setNumberOfDiagonals(0);
 		
 		this.repaint();
+	}
+	
+	public void resetSearchAndHelper() {
+		this.resetHelper();
+		this.resetFoundEdge();
+	}
+	
+	public void resetHelper() {
+		this.resetOldHelper();
+		this.resetNewHelper();
 	}
 	
 	public void resetOldHelper() {
@@ -173,7 +181,6 @@ public class PolygonDrawPanel extends JPanel {
 	public void resetFoundEdge() {
 		this.foundEdge = null;
 	}
-	
 	
 	// -- drawing methods for during the algorithm --
 	private void drawPolygon(Graphics2D g2) {
@@ -202,7 +209,9 @@ public class PolygonDrawPanel extends JPanel {
 	
 	private void drawActiveEdgesHelper(Graphics2D g2) {	
 		for (Edge e : activeEdges) {
-			drawVertex(g2, e.getHelper());
+			if (e.getHelper() != null) {				
+				drawVertex(g2, e.getHelper());
+			}
 		}
 	}
 
@@ -258,7 +267,11 @@ public class PolygonDrawPanel extends JPanel {
 	}
 
 	private void drawCurrentVertex(Graphics2D g2) {
-		drawVertex(g2, currentVertex);
+		Stroke s = g2.getStroke();
+		g2.setStroke(new BasicStroke(3));
+		g2.setColor(GUIColorConfiguration.CURRENT_EVENT);
+		g2.drawOval(currentVertex.getX(), currentVertex.getY(), POINT_SIZE, POINT_SIZE);
+		g2.setStroke(s);
 	}
 
 	private void drawVertex(Graphics2D g2, Vertex v) {
@@ -296,14 +309,13 @@ public class PolygonDrawPanel extends JPanel {
 		drawingPoints = null;
 		drawingLines = null;
 
-		// attributes 
+		// attributes
+		reset();
 		p = null;
 	    diagonals  = null;
-	    numberOfDiagonals  = 0;
 	    currentVertex  = null;
 	    activeEdges  = null;
 	    this.events = null;
-	    numberOfHandledEvents = -1;
 	    
 		repaint();
 	}
@@ -340,5 +352,6 @@ public class PolygonDrawPanel extends JPanel {
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(1));
 	}
+
 	
 }

@@ -1,10 +1,6 @@
 package yMonotonePolygon.GUI;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Line2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -38,31 +34,31 @@ public class MethodPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
 		
+		if (highlightedLine >= 0) {
+			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
+		}
 		if (trueLine >= 0) {
 			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 		}
 		if (falseLine >= 0) {
 			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);		
 		}
-		if (highlightedLine >= 0) {
-			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
-		}
 	}
 	
 	private void init() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		this.setBackground(Color.WHITE);
+		this.setBackground(GUIColorConfiguration.METHOD_BACKGROUND);
 		titlePane = new JTextPane();
-		titlePane.setBackground(Color.WHITE);
+		titlePane.setBackground(GUIColorConfiguration.METHOD_BACKGROUND);
 		linesContainerPanel = new JPanel();
-		linesContainerPanel.setBackground(Color.WHITE);
+		linesContainerPanel.setBackground(GUIColorConfiguration.METHOD_BACKGROUND);
 		linesContainerPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 		linesContainerPanel.setLayout(new BoxLayout(linesContainerPanel, BoxLayout.Y_AXIS));
 		
 		setMethod(Method.WELCOME);
+		resetLines();
 		this.add(titlePane);
 		this.add(linesContainerPanel);
 		//setSize(this.getSize().width, 150);
@@ -87,14 +83,13 @@ public class MethodPanel extends JPanel {
 	}
 
 	public void setTextlines(String[] text) {
+		resetLines();
 		checkTextlinesSize(text.length);
 		this.text = text;
 		setTextlines();
 	}
 	
 	private void setTextlines() {
-		resetLines();
-		
 		linesContainerPanel.removeAll();
 		lines = new JTextPane[MAX_NUMBER_LINES];
 		for (int i = 0; i < MAX_NUMBER_LINES; i++) {
@@ -109,8 +104,6 @@ public class MethodPanel extends JPanel {
 	}
 
 	public void setMethod(Method method) {
-		resetLines();
-
 		this.method = method;
 		setTitle(method.getName());
 		setTextlines(method.getLines());
@@ -125,11 +118,22 @@ public class MethodPanel extends JPanel {
 	// -- visualization features -- visualization features --
 	
 	public void highlightLine(int lineNumber) {
+		if ((highlightedLine >= 0) && (highlightedLine != trueLine) && (highlightedLine != falseLine)) {			
+			lines[highlightedLine].setBackground(GUIColorConfiguration.METHOD_BACKGROUND);
+		}
 		checkLineNumber(lineNumber);
 		highlightedLine =  lineNumber;
 		lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
 	}
 
+	public void setBooleanLine(int line, boolean booleanEventOutcome) {
+		if (booleanEventOutcome) {
+			setBooleanLineTrue(line);
+		} else {
+			setBooleanLineFalse(line);
+		}
+	}
+	
 	public void setBooleanLineTrue(int lineNumber) {
 		checkLineNumber(lineNumber);
 		trueLine = lineNumber;
@@ -160,6 +164,8 @@ public class MethodPanel extends JPanel {
 			throw new IllegalArgumentException("Illegal line number.");
 		}
 	}
+
+
 
 
 
