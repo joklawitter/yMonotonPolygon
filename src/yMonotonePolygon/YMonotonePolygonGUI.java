@@ -180,6 +180,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         velocity = new JSlider();
         velocity.setMaximum(10);
         velocity.setMinimum(1);
+        velocity.setToolTipText("adjust speed of automatically step through the algorithm");
+
         // TODO config slider
         algorithmController.add(velocity);
 
