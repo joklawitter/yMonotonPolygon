@@ -1,5 +1,6 @@
 package yMonotonePolygon.GUI;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
@@ -35,6 +36,7 @@ public class MethodPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		
 		if (highlightedLine >= 0) {
 			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
 		}
@@ -44,9 +46,15 @@ public class MethodPanel extends JPanel {
 		if (falseLine >= 0) {
 			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);		
 		}
+		
+		//linesContainerPanel.revalidate();
 	}
 	
 	private void init() {
+        this.setMaximumSize(new Dimension(10000, 200));
+        this.setPreferredSize(new Dimension(1000, 200));
+        this.setMinimumSize(new Dimension(1, 200));
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.setBackground(GUIColorConfiguration.METHOD_BACKGROUND);
@@ -100,7 +108,10 @@ public class MethodPanel extends JPanel {
 				lines[i].setText("");
 			}
 			linesContainerPanel.add(lines[i]);
+			
 		}
+		linesContainerPanel.revalidate();
+		linesContainerPanel.repaint();		
 	}
 
 	public void setMethod(Method method) {

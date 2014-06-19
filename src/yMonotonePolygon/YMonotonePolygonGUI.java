@@ -212,9 +212,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     private void initMethodPanel() {
         methodPanel = new MethodPanel();
-        methodPanel.setMaximumSize(new Dimension(10000, 200));
-        methodPanel.setPreferredSize(new Dimension(600, 200));
-        methodPanel.setMinimumSize(new Dimension(600, 200));
+
     }
 
     // -- initialize algorithm -- reset -- initialize algorithm -- reset --
@@ -312,7 +310,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                 	methodPanel.repaint();
                     time = (int) (1.0 / (double) velocity.getValue() * 2000.0);
                     System.out.println("time " + time);
-                    if (currentSLPosition == currentHistory.size() - 1) {
+                    if (currentSLPosition == currentHistory.size()) {
+                    	drawEverything();
                     	resetPlay();
                     }
                     

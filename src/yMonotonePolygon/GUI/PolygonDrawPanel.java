@@ -9,7 +9,9 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -24,8 +26,7 @@ public class PolygonDrawPanel extends JPanel {
 
 	private static final long serialVersionUID = 3139953215271841299L;
 	
-	private static final int POINT_SIZE = 2;
-	private static final int LINE_SIZE = 2;
+	private static final int POINT_SIZE = 5;
 	private static final int EVENT_XPOSITION = 15;
 	
 	// whether the panel is in drawing mode or not (drawing new polygon)
@@ -57,6 +58,7 @@ public class PolygonDrawPanel extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		if (inDrawMode) {
 			drawRedBorder(g2);		
 			for (Point p : drawingPoints) {
@@ -195,18 +197,13 @@ public class PolygonDrawPanel extends JPanel {
 	private void drawVertices(Graphics2D g2) {
 		for (int i = 0; i < p.npoints; i++) {
 		    drawVertex(g2, new Vertex(p.xpoints[i], p.ypoints[i], GUIColorConfiguration.EDGE_STD_COLOR));
-		    //drawSweepLineEvent(g2, p.ypoints[i]);
 		}
 	}
 	
 	private void drawActiveEdges(Graphics2D g2) {
-		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(LINE_SIZE));
-
 		for (Edge e : activeEdges) {
 			drawLine(g2, e);
 		}
-		g2.setStroke(s);
 	}
 	
 	private void drawActiveEdgesHelper(Graphics2D g2) {	
@@ -244,7 +241,7 @@ public class PolygonDrawPanel extends JPanel {
 			}
 			
 			drawEvent(g2, v);
-			
+		
 			oldY = v.getY();
 			i++;
 		}		
@@ -256,10 +253,8 @@ public class PolygonDrawPanel extends JPanel {
 	}
 	
 	private void drawEvent(Graphics2D g2, Vertex v) {
-		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(3));
-		g2.drawRect(EVENT_XPOSITION, v.getY() - 1, POINT_SIZE, POINT_SIZE);
-		g2.setStroke(s);
+		Rectangle2D.Double rect = new Rectangle2D.Double(EVENT_XPOSITION, v.getY() - 2, POINT_SIZE, POINT_SIZE );
+		g2.fill(rect);
 	}
 
 	private void drawLine(Graphics2D g2, Edge edge) {
@@ -269,28 +264,16 @@ public class PolygonDrawPanel extends JPanel {
 	}
 
 	private void drawCurrentVertex(Graphics2D g2) {
-		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(3));
 		g2.setColor(GUIColorConfiguration.CURRENT_EVENT);
-		g2.drawOval(currentVertex.getX(), currentVertex.getY(), POINT_SIZE, POINT_SIZE);
-		g2.setStroke(s);
+		Ellipse2D.Double circle = new Ellipse2D.Double(currentVertex.getX() - 2, currentVertex.getY() - 2, POINT_SIZE, POINT_SIZE);
+		g2.fill(circle);
 	}
 
 	private void drawVertex(Graphics2D g2, Vertex v) {
-		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(3));
 		g2.setColor(v.getColor());
-		g2.drawOval(v.getX(), v.getY(), POINT_SIZE, POINT_SIZE);
-		g2.setStroke(s);
+		Ellipse2D.Double circle = new Ellipse2D.Double(v.getX() - 2, v.getY() - 2, POINT_SIZE, POINT_SIZE);
+		g2.fill(circle);
 	}
-
-	/*private void drawSweepLineEvent(Graphics2D g2, int yPos) {
-	    Stroke s = g2.getStroke();
-	    g2.setStroke(new BasicStroke(3));
-	    g2.setColor(Color.black);
-	    g2.drawRect(5, yPos - 1, POINT_SIZE, POINT_SIZE);
-	    g2.setStroke(s);
-	}*/
 	
 	private void drawSweepLine(Graphics2D g2) {
 		Stroke s = g2.getStroke();
@@ -331,17 +314,22 @@ public class PolygonDrawPanel extends JPanel {
 	// -- methods for during drawing mode! -- just for drawing mode! --
 	public void drawPoint(int x, int y) {
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(3));
+		g2.setRenderingHint(
+			    RenderingHints.KEY_ANTIALIASING,
+			    RenderingHints.VALUE_ANTIALIAS_ON);
+
+		Ellipse2D.Double circle = new Ellipse2D.Double(x - 2, y - 2, POINT_SIZE, POINT_SIZE);
+		g2.fill(circle);
 		drawingPoints.add(new Point(x, y));
-		g2.drawOval(x, y, POINT_SIZE, POINT_SIZE);
-		g2.setStroke(s);
 	}
 
 	public void drawLine(int x, int y, int i, int j) {
 		Line2D.Double l = new Line2D.Double(x, y, i, j);
 		drawingLines.add(l);
 		Graphics2D g2 = (Graphics2D) this.getGraphics();
+		g2.setRenderingHint(
+			    RenderingHints.KEY_ANTIALIASING,
+			    RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.draw(l);
 	}
 
