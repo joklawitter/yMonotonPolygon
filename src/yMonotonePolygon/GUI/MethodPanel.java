@@ -44,7 +44,7 @@ public class MethodPanel extends JPanel {
 			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 		}
 		if (falseLine >= 0) {
-			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);		
+			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);
 		}
 		
 		//linesContainerPanel.revalidate();
