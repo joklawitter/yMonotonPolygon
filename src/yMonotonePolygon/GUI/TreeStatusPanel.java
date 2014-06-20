@@ -29,7 +29,7 @@ public class TreeStatusPanel extends JPanel {
 	private Vertex searchPoint;
 	
 	public TreeStatusPanel() {
-		this.setMaximumSize(new Dimension(10000, 40));
+		//this.setMaximumSize(new Dimension(10000, 40));
 		this.setPreferredSize(new Dimension(600, 40));
 		this.setMinimumSize(new Dimension(1, 40));
 		this.setBorder(BorderFactory.createLoweredBevelBorder());

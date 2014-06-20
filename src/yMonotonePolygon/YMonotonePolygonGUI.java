@@ -2,6 +2,8 @@ package yMonotonePolygon;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -125,24 +127,35 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         this.setBounds(100, 100, 1000, 800);
         // frame.setMinimumSize(new Dimension(800, 1000));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+        this.setLayout(new GridBagLayout());//new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         // frame.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // init button panel
         initMenue();
-        this.add(menue);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weighty = 0;
+        c.weightx = 1.0;
+        this.add(menue, c);
 
+        c.weighty = 1.0;
+        c.gridy = 1;
         // init algorithm panel
         initDrawPanel();
-        this.add(sweepLine);
+        this.add(sweepLine, c);
 
+        c.weighty = 0;
+        c.gridy = 2;
         // init tree status panel
         initTreeStatusPanel();
-        this.add(treeDataStructure);
+        this.add(treeDataStructure, c);
 
+        c.gridy = 3;
         // init method panel
         initMethodPanel();
-        this.add(methodPanel);
+        this.add(methodPanel, c);
 
         // init praecomputer
         praeComputer = new PraeComputer();
@@ -204,7 +217,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         menue.add(saveBtn);
         menue.add(loadData);
 
-        menue.setMaximumSize(new Dimension(10000, 50));
+        //menue.setMaximumSize(new Dimension(10000, 50));
         menue.setPreferredSize(new Dimension(600, 50));
         menue.setMinimumSize(new Dimension(1, 100));
     }

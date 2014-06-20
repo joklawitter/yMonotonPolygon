@@ -51,7 +51,7 @@ public class MethodPanel extends JPanel {
 	}
 	
 	private void init() {
-        this.setMaximumSize(new Dimension(10000, 200));
+        //this.setMaximumSize(new Dimension(10000, 200));
         this.setPreferredSize(new Dimension(1000, 200));
         this.setMinimumSize(new Dimension(1, 200));
 		
