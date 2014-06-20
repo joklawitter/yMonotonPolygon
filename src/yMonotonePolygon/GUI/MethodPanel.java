@@ -83,7 +83,7 @@ public class MethodPanel extends JPanel {
 	}
 	
 	private void setTitlePane() {
-		titlePane.setText(method.getName());
+		titlePane.setText(this.title);
 	}
 
 	public String[] getTextlines() {

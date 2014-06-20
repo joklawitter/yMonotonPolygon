@@ -11,6 +11,7 @@ import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.PraeComputation.Geometry;
 import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
+import yMonotonePolygon.PraeComputation.Reader;
 
 public class TestGeometry {
 
@@ -77,7 +78,7 @@ public class TestGeometry {
 	
 	@Test
 	public void testOrientationCheck() throws IllegalPolygonException {
-		Polygon p = TestHelper.readTestPolygon("testWrongOrientation");
+		Polygon p = Reader.readTestPolygon("testWrongOrientation");
 		PraeComputer pc = new PraeComputer();
 		pc.work(p);
 		assertTrue(Geometry.checkPolygonOrientation(pc.getVertices()));
@@ -85,7 +86,7 @@ public class TestGeometry {
 
 	@Test (expected = IllegalArgumentException.class)
 	public void testNotSimplePolygon() throws IllegalPolygonException {
-		Polygon p = TestHelper.readTestPolygon("testNonSimplePolygon");
+		Polygon p = Reader.readTestPolygon("testNonSimplePolygon");
 		PraeComputer pc = new PraeComputer();
 		pc.work(p);
 	}

@@ -45,24 +45,29 @@ public class TreeStatusPanel extends JPanel {
 			    RenderingHints.KEY_ANTIALIASING,
 			    RenderingHints.VALUE_ANTIALIAS_ON);
 		
+		if (searchPoint != null) {
+			g2.setColor(GUIColorConfiguration.CURRENT_EVENT);
+			drawSearchLine(g2, searchPoint);
+		}
+
 		if (vertices != null) {
 			for (Vertex v : vertices) {
 				g2.setColor(v.getColor());
 				drawVertex(g2, v);
 			}
 		}
-		
-		if (searchPoint != null) {
-			g2.setColor(GUIColorConfiguration.CURRENT_EVENT);
-			drawVertex(g2, searchPoint);
-		}
-		
 	}
 	
+	private void drawSearchLine(Graphics2D g2, Vertex v) {
+		g2.drawLine(v.getX(), 0, 
+				v.getX(), this.getHeight());
+		
+	}
+
 	private void drawVertex(Graphics2D g2, Vertex v) {
 		Stroke s = g2.getStroke();
-		g2.setStroke(new BasicStroke(4));
-		Ellipse2D.Double circle = new Ellipse2D.Double(v.getX(), Y_POSITION, DIAMETER, DIAMETER);
+		g2.setStroke(new BasicStroke(5));
+		Ellipse2D.Double circle = new Ellipse2D.Double(v.getX() - 2, Y_POSITION, DIAMETER, DIAMETER);
 		g2.fill(circle);
 		//g2.drawOval(v.getX(), 20, 4, 4);
 		g2.setStroke(s);

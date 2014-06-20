@@ -7,8 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.trolltech.qt.gui.QPolygonF;
-
 public class FileInputReader {
 	
 	public static Polygon readInputFile(String filename) throws IOException {
@@ -54,46 +52,4 @@ public class FileInputReader {
 		return polygon;
 	}
 	
-	public static QPolygonF readInputFileQF(String filename) throws IOException {
-		if (filename == null) {
-			throw new IOException(filename);
-		}
-		
-		FileInputStream fstream = new FileInputStream(filename);
-			
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			
-		String strLine = br.readLine();
-		String[] tokens = strLine.split("\\s");
-			
-		QPolygonF polygon = new QPolygonF();
-		
-		if (tokens.length <= 4) {
-			br.close();
-			throw new IOException("illegal format or not enough points");
-		}
-		
-		if (!tokens[0].equalsIgnoreCase("polygon")) {
-			br.close();
-			throw new IOException("illegal format");
-		}
-		
-		for (int i = 1; i < tokens.length; i++) {
-			String[] coordinates = tokens[i].split(",");
-			if (coordinates.length != 2) {
-				br.close();
-				throw new IOException("illegal point format");
-			}
-			
-			int x = Integer.parseInt(coordinates[0]);
-			int y = Integer.parseInt(coordinates[1]);
-			
-			polygon.add(x, y);
-		}
-		
-		br.close();
-		
-		return polygon;
-	}
 }
