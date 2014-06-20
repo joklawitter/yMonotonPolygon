@@ -185,6 +185,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         velocity.setMaximum(100);
         velocity.setMinimum(1);
         velocity.setValue(50);
+        velocity.setToolTipText("adjust speed of automatically step through the algorithm");
         algorithmController.add(velocity);
 
         // loading input
