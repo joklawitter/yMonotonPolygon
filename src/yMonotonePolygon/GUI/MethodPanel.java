@@ -1,5 +1,6 @@
 package yMonotonePolygon.GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
@@ -7,6 +8,9 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 import yMonotonePolygon.AlgorithmObjects.Method;
 
@@ -38,12 +42,19 @@ public class MethodPanel extends JPanel {
 		
 		
 		if (highlightedLine >= 0) {
+		    lines[highlightedLine].setForeground(Color.black);
 			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
 		}
 		if (trueLine >= 0) {
+//		    StyleContext context = new StyleContext();
+//		    Style style = context.addStyle("", null);
+//		    StyleConstants.setForeground(style, Color.white);
+		    
+		    lines[trueLine].setForeground(Color.white);
 			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 		}
 		if (falseLine >= 0) {
+		    lines[falseLine].setForeground(Color.white);
 			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);
 		}
 		

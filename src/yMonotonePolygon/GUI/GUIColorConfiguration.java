@@ -33,7 +33,7 @@ public final class GUIColorConfiguration {
 
 	// colors for lines in method
 	public static final Color TRUE_LINE = new Color(121, 220,28);;
-	public static final Color FALSE_LINE = new Color(202, 83, 83);
+	public static final Color FALSE_LINE = new Color(255, 43, 0);
 	public static final Color HIGHLIGHTED_LINE = new Color(230,230,230);
 	
 	
