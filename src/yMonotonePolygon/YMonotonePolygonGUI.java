@@ -124,7 +124,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initialize() {
         // init main frame
         this.setTitle("Y-Monoton Polygon Algorithm Demonstrator");
-        this.setBounds(100, 100, 1000, 800);
+        this.setBounds(100, 100, 1100, 800);
         // frame.setMinimumSize(new Dimension(800, 1000));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new GridBagLayout());//new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -183,6 +183,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         skipForward.setToolTipText("skip to the end of the algorithm");
         skipForward.addActionListener(this);
         play = new JButton("Play");
+        //play = new JButton("\u25b6");
         play.setToolTipText("Automatically step through algorithm");
         play.addActionListener(this);
         algorithmController = new JPanel();
