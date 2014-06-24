@@ -7,7 +7,6 @@ import yMonotonePolygon.Quicksort;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.List;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
@@ -41,11 +40,11 @@ import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.GUI.MethodPanel;
 import yMonotonePolygon.GUI.PolygonDrawPanel;
 import yMonotonePolygon.GUI.TreeStatusPanel;
-import yMonotonePolygon.PraeComputation.Geometry;
 import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 import yMonotonePolygon.PraeComputation.Reader;
-import algo.Triangulator;
+
+//import algo.Triangulator;
 
 public class YMonotonePolygonGUI extends JFrame implements ActionListener, MouseListener {
     private static final long serialVersionUID = -5073162102279789347L;
@@ -344,28 +343,36 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     public void triangulate() {
-        LinkedList<Point2D> points = getListOfPoints(p);
-        LinkedList<Edge> diags = praeComputer.getDiagonals();
-        diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
-        Polygon right = p;
-        LinkedList<Polygon> yPolygons = new LinkedList<Polygon>();
-        for (Edge d : diags) {
-            Polygon l = getLeftSubPolygon(d, right);
-            yPolygons.add(l);
-            System.out.println("l " + l.npoints);
-            right = getRightSubPolygon(d, right);
-            if (d == diags.getLast()) {
-                yPolygons.add(right);
-            }
-        }
+        LinkedList<Point2D> points = praeComputer.getSamplePolygon();
         
-        for (int i = 0; i < yPolygons.size(); i++) {
-            System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
-        }
+//        //getListOfPoints(p);
+//        LinkedList<Edge> diags = praeComputer.getDiagonals();
+//        diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
+//        Polygon right = p;
+//        LinkedList<Polygon> yPolygons = new LinkedList<Polygon>();
+//        for (Edge d : diags) {
+//            Polygon l = getLeftSubPolygon(d, right);
+//            yPolygons.add(l);
+//            System.out.println("l " + l.npoints);
+//            right = getRightSubPolygon(d, right);
+//            if (d == diags.getLast()) {
+//                yPolygons.add(right);
+//            }
+//        }
+//        
+//        for (int i = 0; i < yPolygons.size(); i++) {
+//            System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
+//        }
+//        
+//        System.out.println("diags? " + diags.toString());
+//       
         
-        System.out.println("diags? " + diags.toString());
-       
-        Triangulator.triangulateMonotone(points);
+        Polygon poly = new Polygon();
+        for (Point2D p : points) {
+        	poly.addPoint((int) p.getX(), (int) p.getY());
+        }
+        initAlgorithm(poly);
+        //Triangulator.triangulateMonotone(points);
         // TODO: ??
     }
     

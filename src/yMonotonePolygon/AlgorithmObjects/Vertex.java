@@ -1,6 +1,8 @@
 package yMonotonePolygon.AlgorithmObjects;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.util.HashSet;
 
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 import yMonotonePolygon.PraeComputation.Geometry;
@@ -21,6 +23,8 @@ public class Vertex implements Comparable<Vertex> {
 	private Color color = GUIColorConfiguration.VERTEX_STD_COLOR;
 	private Edge helpedEdge;
 	private boolean helping;
+	
+	private HashSet<Edge> diagonals = null;
 	
 	
 	public Vertex(int x, int y) {
@@ -137,7 +141,6 @@ public class Vertex implements Comparable<Vertex> {
 		return true;		
 	}
 
-
 	public void setHelpedEdge(Edge e) {
 		this.helpedEdge = e;
 		this.color = e.getColor();
@@ -148,6 +151,22 @@ public class Vertex implements Comparable<Vertex> {
 		this.helpedEdge = null;
 		this.color = GUIColorConfiguration.VERTEX_STD_COLOR;
 		this.helping = false;
+	}
+	
+	public void addDiagonal(Edge e) {
+		if (diagonals == null) {
+			diagonals = new HashSet<Edge>();
+		}
+		
+		diagonals.add(e);		
+	}
+	
+	public HashSet<Edge> getDiagonals() {
+		return diagonals;
+	}
+	
+	public boolean hasDiagonals() {
+		return (diagonals != null) && (diagonals.size() > 0);
 	}
 	
 	@Override
@@ -198,5 +217,11 @@ public class Vertex implements Comparable<Vertex> {
 		}
 		
 	}
+
+	
+	public Point2D getPoint2D() {
+		return new Point2D.Double(getX(), getY());
+	}
+
 
 }

@@ -8,9 +8,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 
 import yMonotonePolygon.AlgorithmObjects.Method;
 
@@ -127,8 +124,8 @@ public class MethodPanel extends JPanel {
 
 	public void setMethod(Method method) {
 		this.method = method;
-		setTitle(method.getName());
-		setTextlines(method.getLines());
+		setTitle(this.method.getName());
+		setTextlines(this.method.getLines());
 	}
 
 	private void resetLines() {
@@ -186,11 +183,5 @@ public class MethodPanel extends JPanel {
 			throw new IllegalArgumentException("Illegal line number.");
 		}
 	}
-
-
-
-
-
-
 
 }
