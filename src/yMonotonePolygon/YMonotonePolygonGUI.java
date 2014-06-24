@@ -373,11 +373,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
         initAlgorithm(poly);
         //Triangulator.triangulateMonotone(points);
-        // TODO: ??
+        // TODO
     }
     
 
-    
     private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) {
         LinkedList<Point> ps = new LinkedList<Point>();
         

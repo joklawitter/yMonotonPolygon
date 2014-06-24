@@ -54,7 +54,7 @@ public enum Method {
 					"File must be in correct format!"}),
 	START ("Y-Monotone Polygon Algorithm",
 			new String[]
-					{"TODO"});
+					{"Press PLAY or go step by step or event by event throught the algorithm. "});
 	
 	private final String name;
 	private final String[] lines;
