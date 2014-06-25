@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -191,7 +190,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         c.gridy = 2;
 
         JTextPane dataStructureTitle = new JTextPane();
-        dataStructureTitle.setText("sinnvoller Titel");
+        dataStructureTitle.setText("Sweepline data structure at current event");
         this.add(dataStructureTitle, c);
 
         c.gridy = 3;
@@ -320,6 +319,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         time = 100;
         currentSubEvents = new LinkedList<SubEvent>();
 
+        treeDataStructure.reset();
         try {
             praeComputer.work(p);
         } catch (IllegalPolygonException e) {
@@ -333,7 +333,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         	setPolygonText();
             saveBtn.setEnabled(true);
         }
-
+        
         methodPanel.setMethod(Method.START);
 
         
@@ -440,46 +440,47 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // TODO
     }
     
-
-    private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) {
-        LinkedList<Point> ps = new LinkedList<Point>();
-        
-        Polygon leftPoly = new Polygon();
-        ps.add(new Point(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY()));
-        ps.add(new Point(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY()));
-        Edge currEdge = diagonal.getStartVertex().getPrevEdge();
-        while (currEdge.getStartVertex() != diagonal.getEndVertex()) {
-            ps.add(new Point(currEdge.getStartVertex().getX(), currEdge.getStartVertex().getY()));
-            currEdge = currEdge.getStartVertex().getPrevEdge();
-        }
-        Point[] points = ps.toArray(new Point[0]);
-        for(int i = points.length - 1; i >= 0; i--) {
-            leftPoly.addPoint(points[i].x, points[i].y);
-        }
-        return leftPoly;
-    }
-
-    private Polygon getRightSubPolygon(Edge diagonal, Polygon poly) {
-        Polygon rightPoly = new Polygon();
-        rightPoly.addPoint(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY());
-        rightPoly.addPoint(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY());
-        Edge currEdge = diagonal.getEndVertex().getNextEdge();
-        while (currEdge.getEndVertex() != diagonal.getStartVertex()) {
-            rightPoly.addPoint(currEdge.getEndVertex().getX(), currEdge.getEndVertex().getY());
-            currEdge = currEdge.getEndVertex().getNextEdge();
-        }
-        return rightPoly;
-    }
-    
-    private LinkedList<Point2D> getListOfPoints(Polygon poly) {
-        LinkedList<Point2D> points = new LinkedList<Point2D>();
-        for (int i = 0; i < poly.npoints; i++) {
-            Point2D pt = new Point(poly.xpoints[i], poly.ypoints[i]);
-            points.add(pt);
-        }
-        
-        return points;
-    }
+    /*
+//    private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) {
+//        LinkedList<Point> ps = new LinkedList<Point>();
+//        
+//        Polygon leftPoly = new Polygon();
+//        ps.add(new Point(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY()));
+//        ps.add(new Point(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY()));
+//        Edge currEdge = diagonal.getStartVertex().getPrevEdge();
+//        while (currEdge.getStartVertex() != diagonal.getEndVertex()) {
+//            ps.add(new Point(currEdge.getStartVertex().getX(), currEdge.getStartVertex().getY()));
+//            currEdge = currEdge.getStartVertex().getPrevEdge();
+//        }
+//        Point[] points = ps.toArray(new Point[0]);
+//        for(int i = points.length - 1; i >= 0; i--) {
+//            leftPoly.addPoint(points[i].x, points[i].y);
+//        }
+//        return leftPoly;
+//    }
+//
+//    private Polygon getRightSubPolygon(Edge diagonal, Polygon poly) {
+//        Polygon rightPoly = new Polygon();
+//        rightPoly.addPoint(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY());
+//        rightPoly.addPoint(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY());
+//        Edge currEdge = diagonal.getEndVertex().getNextEdge();
+//        while (currEdge.getEndVertex() != diagonal.getStartVertex()) {
+//            rightPoly.addPoint(currEdge.getEndVertex().getX(), currEdge.getEndVertex().getY());
+//            currEdge = currEdge.getEndVertex().getNextEdge();
+//        }
+//        return rightPoly;
+//    }
+//    
+//    private LinkedList<Point2D> getListOfPoints(Polygon poly) {
+//        LinkedList<Point2D> points = new LinkedList<Point2D>();
+//        for (int i = 0; i < poly.npoints; i++) {
+//            Point2D pt = new Point(poly.xpoints[i], poly.ypoints[i]);
+//            points.add(pt);
+//        }
+//        
+//        return points;
+//    }
+*/
 
     public void playClicked() {
         isPaused = !isPaused;
