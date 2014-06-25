@@ -60,7 +60,7 @@ public class PolygonDrawPanel extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		if (inDrawMode) {
-			drawRedBorder(g2);		
+			drawBorder(g2);		
 			for (Point p : drawingPoints) {
 				g2.drawOval(p.x - 1, p.y - 1, POINT_SIZE, POINT_SIZE);
 			}		
@@ -341,8 +341,8 @@ public class PolygonDrawPanel extends JPanel {
 		drawingLines = new HashSet<Line2D>();
 	}
 
-	private void drawRedBorder(Graphics2D g2) {
-		g2.setColor(Color.RED);
+	private void drawBorder(Graphics2D g2) {
+		g2.setColor(GUIColorConfiguration.DRAW_BORDER);
 		g2.setStroke(new BasicStroke(5));
 		g2.drawRect(3, 3, this.getWidth() - 8, this.getHeight() - 8);
 		g2.setColor(Color.BLACK);

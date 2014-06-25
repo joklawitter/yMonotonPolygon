@@ -12,6 +12,8 @@ public final class GUIColorConfiguration {
 	
 	public static final Color POLYGON_BACKGROUND = Color.LIGHT_GRAY;
 	
+	public static final Color DRAW_BORDER = Color.ORANGE;
+
 	public static final Color POLYGON_INSIDE = Color.WHITE;
 	
 	public static final Color DIAGONAL = Color.BLUE;

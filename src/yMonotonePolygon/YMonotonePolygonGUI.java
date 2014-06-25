@@ -1,10 +1,9 @@
 package yMonotonePolygon;
 
 import java.awt.Dimension;
-
-import yMonotonePolygon.Quicksort;
-
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -15,7 +14,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -24,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
@@ -77,30 +81,31 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     public TreeStatusPanel treeDataStructure;
 
     // --- menu and buttons
-    public JPanel menue;
+    private Font awesomeFont;
+    private JPanel menue;
     // menu and buttons | algorithm control
-    public JPanel algorithmController;
+    private JPanel algorithmController;
     // public QButtonGroup algorithmController;
-    public JButton stepBack;
-    public JButton stepForward;
-    public JButton lineUp;
-    public JButton lineDown;
-    public JButton skipBack;
-    public JButton skipForward;
-    public JButton play;
-    public JButton triangulate;
+    private final JButton stepBack;
+    private final JButton stepForward;
+    private final JButton lineUp;
+    private final JButton lineDown;
+    private final JButton skipBack;
+    private final JButton skipForward;
+    private final JButton play;
+    private final JButton triangulate;
     private boolean isPaused;
-    public JSlider velocity;
+    private final JSlider velocity;
     // menu and buttons | load polygon and draw polygon control
-    public JButton editBtn;
+    private JButton editBtn;
     private boolean inDrawMode = false;
     private boolean polygonDrawn = false;
     private String drawnPolygonText;
-    private final JButton saveBtn = new JButton("Save");
-    public JButton loadData;
+    private final JButton saveBtn;
+    private JButton loadData;
 
     // --- method panel
-    public MethodPanel methodPanel;
+    private MethodPanel methodPanel;
 
     // --- algorithm polygon sweepline panel
     private PolygonDrawPanel sweepLine;
@@ -121,6 +126,31 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
      * Create the application.
      */
     public YMonotonePolygonGUI() {
+    	 try {
+             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+         } catch (ClassNotFoundException | InstantiationException | 
+        		 IllegalAccessException | UnsupportedLookAndFeelException e) {
+         }
+
+         try (InputStream is = new FileInputStream(System.getProperty("user.dir") 
+        		 + File.separator + "AwesomeFont" + File.separator + "fontawesome-webfont.ttf")) {
+        	 awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+             awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
+         } catch (IOException | FontFormatException  exp) {// 
+             exp.printStackTrace();
+         }
+ 
+    	
+    	saveBtn = new JButton("\uf0c7");
+    	stepBack = new JButton("\uf048");
+    	stepForward = new JButton("\uf051");
+    	lineUp = new JButton("\uf062");
+    	lineDown = new JButton("\uf063");
+    	skipBack = new JButton("\uf0e2");
+    	skipForward = new JButton("To End");
+    	play = new JButton("\uf04b");
+    	velocity = new JSlider();
+    	triangulate = new JButton("Triangulate");
         initialize();
         setVisible(true);
     }
@@ -181,28 +211,34 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initMenue() {
         menue = new JPanel();
 
-        stepBack = new JButton("|<<");
-        stepBack.setToolTipText("go to previous line of code");
+        stepBack.setFont(awesomeFont);
+        stepBack.setToolTipText("Go to previous line of code.");
         stepBack.addActionListener(this);
-        stepForward = new JButton(">>|");
-        stepForward.setToolTipText("go to next line of code");
+        
+        stepForward.setFont(awesomeFont);
+        stepForward.setToolTipText("Go to next line of code.");
         stepForward.addActionListener(this);
-        lineUp = new JButton("Up");
-        lineUp.setToolTipText("Go to previous sweepline event");
+        
+        lineUp.setFont(awesomeFont);
+        lineUp.setToolTipText("Go to previous sweepline event.");
         lineUp.addActionListener(this);
-        lineDown = new JButton("Down");
-        lineDown.setToolTipText("Go to next sweepline event");
+        
+        lineDown.setFont(awesomeFont);
+        lineDown.setToolTipText("Go to next sweepline event.");
         lineDown.addActionListener(this);
-        skipBack = new JButton("Reset");
-        skipBack.setToolTipText("skip to the beginning of the algorithm");
+        
+        skipBack.setFont(awesomeFont);
+        skipBack.setToolTipText("Skip to the beginning of the algorithm.");
         skipBack.addActionListener(this);
-        skipForward = new JButton("To End");
-        skipForward.setToolTipText("skip to the end of the algorithm");
+        
+        skipForward.setToolTipText("Skip to the end of the algorithm.");
         skipForward.addActionListener(this);
-        play = new JButton("Play");
-        //play = new JButton("\u25b6");
-        play.setToolTipText("Automatically step through algorithm");
+        
+        play.setFont(awesomeFont);
+        play.setToolTipText("Automatically step through algorithm.");
         play.addActionListener(this);
+        
+        
         algorithmController = new JPanel();
         algorithmController.add(skipBack);
         algorithmController.add(lineUp);
@@ -212,27 +248,31 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         algorithmController.add(lineDown);
         algorithmController.add(skipForward);
 
-        velocity = new JSlider();
         velocity.setMaximum(100);
         velocity.setMinimum(1);
         velocity.setValue(50);
-        velocity.setToolTipText("adjust speed of play");
+        velocity.setToolTipText("Adjust speed of play.");
         algorithmController.add(velocity);
 
-        triangulate = new JButton("Triangulate");
+        enableMenue(false);
+        
         triangulate.addActionListener(this);
-        triangulate.setToolTipText("triangulate y-monoton Polygon");
+        triangulate.setToolTipText("Triangulate y-monoton Polygon.");
 
         // loading input
-        editBtn = new JButton("Draw");
+        editBtn = new JButton("\uf040");
+        editBtn.setFont(awesomeFont);
         editBtn.addActionListener(this);
-        editBtn.setToolTipText("Draw a polygon");
+        editBtn.setToolTipText("Draw a polygon.");
+        saveBtn.setFont(awesomeFont);
+        saveBtn.repaint();
         saveBtn.addActionListener(this);
         saveBtn.setEnabled(false);
-        saveBtn.setToolTipText("Save your drawn polygon");
-        loadData = new JButton("Load");
+        saveBtn.setToolTipText("Save your drawn polygon.");
+        loadData = new JButton("\uf07c ");
+        loadData.setFont(awesomeFont);
         loadData.addActionListener(this);
-        loadData.setToolTipText("Load a polygon");
+        loadData.setToolTipText("Load a polygon.");
 
         menue.add(algorithmController);
         menue.add(editBtn);
@@ -244,8 +284,21 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         menue.setPreferredSize(new Dimension(600, 50));
         menue.setMinimumSize(new Dimension(1, 100));
     }
+    
+    private void enableMenue(boolean b) {
+    	saveBtn.setEnabled(b);
+    	stepBack.setEnabled(b);
+    	stepForward.setEnabled(b);
+    	lineUp.setEnabled(b);
+    	lineDown.setEnabled(b);
+    	skipBack.setEnabled(b);
+    	skipForward.setEnabled(b);
+    	play.setEnabled(b);
+    	velocity.setEnabled(b);
+    	triangulate.setEnabled(b);
+	}
 
-    private void initDrawPanel() {
+	private void initDrawPanel() {
         sweepLine = new PolygonDrawPanel();
     }
 
@@ -294,6 +347,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         sweepLine.setDiagonals(diagonals);
         sweepLine.setEvents(praeComputer.getVertices());
         polygonSet = true;
+        enableMenue(true);
     }
 
     private void reset() {
@@ -306,7 +360,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         reachedEnd = false;
         methodPanel.setMethod(Method.START);
     }
-
+    
     // -- handling algorithm flow -- handling algorithm flow -- handling
     // algorithm flow --
     @Override
@@ -420,11 +474,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     public void playClicked() {
         isPaused = !isPaused;
         if (!isPaused) {
-            play.setText("||");
+            play.setText("\uf04c");
             play.setToolTipText("Pause algorithm.");
         } else {
-            play.setText("Play");
-            play.setToolTipText("Automatically step through algorithm.");
+        	resetPlay();
         }
 
         new Thread() {
@@ -458,7 +511,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     private void resetPlay() {
         isPaused = true;
-        play.setText("Play");
+        //play.setText("Play");
+        play.setText("\uf04b");
         play.setToolTipText("Automatically step through algorithm.");
     }
 
@@ -677,7 +731,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // clear current
         sweepLine.clear();
         polygonSet = false;
-        saveBtn.setEnabled(false);
+        enableMenue(false);
         treeDataStructure.reset();
 
         // set text in method field to instructions:
