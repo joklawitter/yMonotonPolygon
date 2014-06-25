@@ -146,7 +146,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     	lineUp = new JButton("\uf062");
     	lineDown = new JButton("\uf063");
     	skipBack = new JButton("\uf0e2");
-    	skipForward = new JButton("To End");
+    	skipForward = new JButton("\uf14a");
     	play = new JButton("\uf04b");
     	velocity = new JSlider();
     	triangulate = new JButton("Triangulate");
@@ -230,6 +230,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         skipBack.setToolTipText("Skip to the beginning of the algorithm.");
         skipBack.addActionListener(this);
         
+        skipForward.setFont(awesomeFont);
         skipForward.setToolTipText("Skip to the end of the algorithm.");
         skipForward.addActionListener(this);
         
