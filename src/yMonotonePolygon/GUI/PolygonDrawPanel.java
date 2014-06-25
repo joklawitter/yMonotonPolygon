@@ -32,8 +32,8 @@ public class PolygonDrawPanel extends JPanel {
 	// whether the panel is in drawing mode or not (drawing new polygon)
 	private boolean inDrawMode = false;
 	// the lines and points for during the drawing mode
-	private HashSet<Point> drawingPoints;
-	private HashSet<Line2D> drawingLines;
+	private LinkedList<Point> drawingPoints;
+	private LinkedList<Line2D> drawingLines;
 
 	// attributes 
 	private Polygon p;
@@ -61,11 +61,11 @@ public class PolygonDrawPanel extends JPanel {
 		
 		if (inDrawMode) {
 			drawBorder(g2);		
-			for (Point p : drawingPoints) {
-				g2.drawOval(p.x - 1, p.y - 1, POINT_SIZE, POINT_SIZE);
-			}		
 			for (Line2D l : drawingLines) {
 				g2.draw(l);
+			}
+			for (Point p : drawingPoints) {
+				drawPoint(g2, p);
 			}
 		} else if (p != null) {
 				drawPolygon(g2);
@@ -323,6 +323,11 @@ public class PolygonDrawPanel extends JPanel {
 		drawingPoints.add(new Point(x, y));
 	}
 
+	public void drawPoint(Graphics2D g2, Point p) {
+		Ellipse2D.Double circle = new Ellipse2D.Double(p.x - 2, p.y - 2, POINT_SIZE, POINT_SIZE);
+		g2.fill(circle);
+	}
+	
 	public void drawLine(int x, int y, int i, int j) {
 		Line2D.Double l = new Line2D.Double(x, y, i, j);
 		drawingLines.add(l);
@@ -333,12 +338,26 @@ public class PolygonDrawPanel extends JPanel {
 		g2.draw(l);
 	}
 
+	public void removeLastPoint() {
+		if (!inDrawMode) {
+			throw new AssertionError();
+		}
+		
+		if (drawingLines.size() >= 1) {
+			drawingLines.removeLast();
+		}
+		
+		if (drawingPoints.size() >= 1) {
+			drawingPoints.removeLast();			
+		}
+	}
+	
 	public void setDrawMode() {
 		clear();
 
 		inDrawMode = true;
-		drawingPoints = new HashSet<Point>();
-		drawingLines = new HashSet<Line2D>();
+		drawingPoints = new LinkedList<Point>();
+		drawingLines = new LinkedList<Line2D>();
 	}
 
 	private void drawBorder(Graphics2D g2) {
@@ -347,7 +366,5 @@ public class PolygonDrawPanel extends JPanel {
 		g2.drawRect(3, 3, this.getWidth() - 8, this.getHeight() - 8);
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(1));
-	}
-
-	
+	}	
 }

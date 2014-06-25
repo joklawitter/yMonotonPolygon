@@ -286,7 +286,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
     
     private void enableMenue(boolean b) {
-    	saveBtn.setEnabled(b);
     	stepBack.setEnabled(b);
     	stepForward.setEnabled(b);
     	lineUp.setEnabled(b);
@@ -331,11 +330,14 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
 
         if (polygonDrawn) {
+        	setPolygonText();
             saveBtn.setEnabled(true);
         }
 
         methodPanel.setMethod(Method.START);
 
+        
+        
         // draw the polygon
         sweepLine.setP(p);
         sweepLine.repaint();
@@ -350,7 +352,15 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         enableMenue(true);
     }
 
-    private void reset() {
+    private void setPolygonText() {
+		String s = "polygon ";
+		for (int i = 0; i < p.npoints; i++) {
+			 s += p.xpoints[i] + "," + p.ypoints[i] + " ";
+		}
+		drawnPolygonText = s;
+	}
+
+	private void reset() {
         currentSLPosition = -1;
         currentLinePosition = -1;
         currentSweepLineEvent = null;
@@ -732,6 +742,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         sweepLine.clear();
         polygonSet = false;
         enableMenue(false);
+        saveBtn.setEnabled(false);
         treeDataStructure.reset();
 
         // set text in method field to instructions:
@@ -744,9 +755,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // catch points
         sweepLine.addMouseListener(this);
         sweepLine.setDrawMode();
-
-        drawnPolygonText = "polygon ";
-        System.out.print("polygon ");
     }
 
     private void endDrawMode() {
@@ -759,7 +767,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             sweepLine.clear();
         }
 
-        System.out.println("");
         sweepLine.removeMouseListener(this);
         sweepLine.repaint();
     }
@@ -769,25 +776,43 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         if (inDrawMode) {
             int eX = e.getX();
             int eY = e.getY();
+            if (p.npoints >= 1) {            	
+            	int xLast = p.xpoints[p.npoints - 1];
+            	int yLast = p.ypoints[p.npoints - 1];
+            	if ((Math.abs(eX - xLast) + Math.abs(eY - yLast)) < 10) {
+            		removeLastPoint();
+            		return;
+            	}
+            }
+            
             if (p.npoints >= 3) {
+            	int xLast = p.xpoints[p.npoints - 1];
+            	int yLast = p.ypoints[p.npoints - 1];
                 int x = p.xpoints[0];
                 int y = p.ypoints[0];
-
+                                
                 if ((Math.abs(eX - x) + Math.abs(eY - y)) < 10) {
-                    sweepLine.drawLine(p.xpoints[0], p.ypoints[0], p.xpoints[p.npoints - 1], p.ypoints[p.npoints - 1]);
+                    sweepLine.drawLine(p.xpoints[0], p.ypoints[0], xLast, yLast);
                     endDrawMode();
                     return;
                 }
-
-                // TODO check self intersection
+  
             }
             addPoint(eX, eY);
         }
     }
 
-    private void addPoint(int eX, int eY) {
-        drawnPolygonText += eX + "," + eY + " ";
-        System.out.print(eX + "," + eY + " ");
+    private void removeLastPoint() {
+		sweepLine.removeLastPoint();
+		sweepLine.repaint();
+		Polygon newPoly = new Polygon();
+		for (int i = 0; i < p.npoints - 1; i++) {
+			newPoly.addPoint(p.xpoints[i], p.ypoints[i]);
+		}
+		p = newPoly;
+	}
+
+	private void addPoint(int eX, int eY) {
         p.addPoint(eX, eY);
         sweepLine.drawPoint(eX, eY);
         if (p.npoints >= 2) {
