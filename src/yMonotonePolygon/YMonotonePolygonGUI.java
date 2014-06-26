@@ -1,12 +1,11 @@
 package yMonotonePolygon;
-
+import controller.Main;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -198,7 +197,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initialize() {
         // init main frame
         this.setTitle("Y-Monoton Polygon Algorithm Demonstrator");
-        this.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
+        this.setBounds(100, 100, 1200, 768);// dimension of Beamer + 2 so
                                             // Load-Btn doesnot disappear + alot
                                             // to show TriangulateBtn
         // frame.setMinimumSize(new Dimension(800, 1000));
@@ -227,7 +226,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         c.gridy = 2;
 
         JTextPane dataStructureTitle = new JTextPane();
-        dataStructureTitle.setText("sinnvoller Titel");
+        dataStructureTitle.setText("Sweepline data structure at current event");
         this.add(dataStructureTitle, c);
 
         c.gridy = 3;
@@ -266,7 +265,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         skipBack.setFont(awesomeFont);
         skipBack.setToolTipText("Skip to the beginning of the algorithm.");
         skipBack.addActionListener(this);
-
+        skipForward.setFont(awesomeFont);
         skipForward.setToolTipText("Skip to the end of the algorithm.");
         skipForward.addActionListener(this);
 
@@ -355,6 +354,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         time = 100;
         currentSubEvents = new LinkedList<SubEvent>();
 
+        treeDataStructure.reset();
         try {
             praeComputer.work(p);
         } catch (IllegalPolygonException e) {
@@ -441,9 +441,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     public void triangulate() {
-        System.out.println("event tria");
+
         LinkedList<Point2D> points = praeComputer.getSamplePolygon();
 
+        
         // //getListOfPoints(p);
         // LinkedList<Edge> diags = praeComputer.getDiagonals();
         // diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
@@ -463,7 +464,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         // System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
         // }
         //
-        System.out.println("diags? ");
 
         Polygon poly = new Polygon();
         for (Point2D p : points) {
@@ -474,14 +474,12 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         triangulatePanel = new JPanel();
         triangulatePanel = Main.getTriangulationViewerOf(points);
         triangulatePanel.setBounds(10, 10, 768, 400);
-        triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         triangulatePanel.setPreferredSize(new Dimension(768, 400));
 
         JFrame triaFrame = new JFrame("Triangulator");
         triaFrame.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
-        // Load-Btn doesnot disappear + alot
-        // to show TriangulateBtn
-        // frame.setMinimumSize(new Dimension(800, 1000));
+        // Load-Btn doesnot disappear + alot to show TriangulateBtn
         triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         triaFrame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -491,55 +489,41 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         c.weighty = 1.0;
         c.weightx = 1.0;
         triaFrame.add(triangulatePanel, c);
-        this.doLayout();
-        System.out.println("\n conps " + triangulatePanel);
-        System.out.println("jpanel " + sweepLine);
-        repaint();
         triangulatePanel.repaint();
-        triaFrame.setVisible(true);;
-        // Triangulator.triangulateMonotone(points);
-        // TODO
+        triaFrame.repaint();
+        triaFrame.setVisible(true);
     }
 
-    private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) {
-        LinkedList<Point> ps = new LinkedList<Point>();
-
-        Polygon leftPoly = new Polygon();
-        ps.add(new Point(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY()));
-        ps.add(new Point(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY()));
-        Edge currEdge = diagonal.getStartVertex().getPrevEdge();
-        while (currEdge.getStartVertex() != diagonal.getEndVertex()) {
-            ps.add(new Point(currEdge.getStartVertex().getX(), currEdge.getStartVertex().getY()));
-            currEdge = currEdge.getStartVertex().getPrevEdge();
-        }
-        Point[] points = ps.toArray(new Point[0]);
-        for (int i = points.length - 1; i >= 0; i--) {
-            leftPoly.addPoint(points[i].x, points[i].y);
-        }
-        return leftPoly;
-    }
-
-    private Polygon getRightSubPolygon(Edge diagonal, Polygon poly) {
-        Polygon rightPoly = new Polygon();
-        rightPoly.addPoint(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY());
-        rightPoly.addPoint(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY());
-        Edge currEdge = diagonal.getEndVertex().getNextEdge();
-        while (currEdge.getEndVertex() != diagonal.getStartVertex()) {
-            rightPoly.addPoint(currEdge.getEndVertex().getX(), currEdge.getEndVertex().getY());
-            currEdge = currEdge.getEndVertex().getNextEdge();
-        }
-        return rightPoly;
-    }
-
-    private LinkedList<Point2D> getListOfPoints(Polygon poly) {
-        LinkedList<Point2D> points = new LinkedList<Point2D>();
-        for (int i = 0; i < poly.npoints; i++) {
-            Point2D pt = new Point(poly.xpoints[i], poly.ypoints[i]);
-            points.add(pt);
-        }
-
-        return points;
-    }
+    /*
+     * // private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) { //
+     * LinkedList<Point> ps = new LinkedList<Point>(); // // Polygon leftPoly =
+     * new Polygon(); // ps.add(new Point(diagonal.getEndVertex().getX(),
+     * diagonal.getEndVertex().getY())); // ps.add(new
+     * Point(diagonal.getStartVertex().getX(),
+     * diagonal.getStartVertex().getY())); // Edge currEdge =
+     * diagonal.getStartVertex().getPrevEdge(); // while
+     * (currEdge.getStartVertex() != diagonal.getEndVertex()) { // ps.add(new
+     * Point(currEdge.getStartVertex().getX(),
+     * currEdge.getStartVertex().getY())); // currEdge =
+     * currEdge.getStartVertex().getPrevEdge(); // } // Point[] points =
+     * ps.toArray(new Point[0]); // for(int i = points.length - 1; i >= 0; i--)
+     * { // leftPoly.addPoint(points[i].x, points[i].y); // } // return
+     * leftPoly; // } // // private Polygon getRightSubPolygon(Edge diagonal,
+     * Polygon poly) { // Polygon rightPoly = new Polygon(); //
+     * rightPoly.addPoint(diagonal.getStartVertex().getX(),
+     * diagonal.getStartVertex().getY()); //
+     * rightPoly.addPoint(diagonal.getEndVertex().getX(),
+     * diagonal.getEndVertex().getY()); // Edge currEdge =
+     * diagonal.getEndVertex().getNextEdge(); // while (currEdge.getEndVertex()
+     * != diagonal.getStartVertex()) { //
+     * rightPoly.addPoint(currEdge.getEndVertex().getX(),
+     * currEdge.getEndVertex().getY()); // currEdge =
+     * currEdge.getEndVertex().getNextEdge(); // } // return rightPoly; // } //
+     * // private LinkedList<Point2D> getListOfPoints(Polygon poly) { //
+     * LinkedList<Point2D> points = new LinkedList<Point2D>(); // for (int i =
+     * 0; i < poly.npoints; i++) { // Point2D pt = new Point(poly.xpoints[i],
+     * poly.ypoints[i]); // points.add(pt); // } // // return points; // }
+     */
 
     public void playClicked() {
         isPaused = !isPaused;

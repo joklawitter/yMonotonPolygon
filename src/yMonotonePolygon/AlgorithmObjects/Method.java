@@ -47,7 +47,9 @@ public enum Method {
 			new String[]
 					{"This is the drawing mode for polygons.",
 					"- Click into the the panel to add new points.",
-					"- Click near the start point to close the polygon."}), 
+					"- Click near the start point to close the polygon.",
+					"- Click near last drawn point to remove it from polygon.",
+					"Be aware that the polygon should be simple, i.e. there are no self intersections."}), 
 	ERROR ("Illegal Polygon",
 			new String[]
 					{"The polygon may not intersect itself!",
