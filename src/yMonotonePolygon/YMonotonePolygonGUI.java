@@ -15,11 +15,13 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -30,6 +32,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import controller.Main;
+import algo.Triangulator;
 import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
 import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
@@ -83,6 +87,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     // --- menu and buttons
     private Font awesomeFont;
     private JPanel menue;
+    private JPanel triangulatePanel;
     // menu and buttons | algorithm control
     private JPanel algorithmController;
     // public QButtonGroup algorithmController;
@@ -124,33 +129,64 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     /**
      * Create the application.
+     * 
+     * @throws FileNotFoundException
      */
-    public YMonotonePolygonGUI() {
-    	 try {
-             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         } catch (ClassNotFoundException | InstantiationException | 
-        		 IllegalAccessException | UnsupportedLookAndFeelException e) {
-         }
+    public YMonotonePolygonGUI() throws FileNotFoundException {
 
-         try (InputStream is = new FileInputStream(System.getProperty("user.dir") 
-        		 + File.separator + "AwesomeFont" + File.separator + "fontawesome-webfont.ttf")) {
-        	 awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
-             awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
-         } catch (IOException | FontFormatException  exp) {// 
-             exp.printStackTrace();
-         }
- 
-    	
-    	saveBtn = new JButton("\uf0c7");
-    	stepBack = new JButton("\uf048");
-    	stepForward = new JButton("\uf051");
-    	lineUp = new JButton("\uf062");
-    	lineDown = new JButton("\uf063");
-    	skipBack = new JButton("\uf0e2");
-    	skipForward = new JButton("To End");
-    	play = new JButton("\uf04b");
-    	velocity = new JSlider();
-    	triangulate = new JButton("Triangulate");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // try {
+        // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        // } catch (ClassNotFoundException | InstantiationException |
+        // IllegalAccessException | UnsupportedLookAndFeelException e) {
+        // }
+
+        InputStream is = new FileInputStream(System.getProperty("user.dir") + File.separator + "AwesomeFont"
+                + File.separator + "fontawesome-webfont.ttf");
+        try {
+            awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
+        // try (InputStream is = new
+        // FileInputStream(System.getProperty("user.dir")
+        // + File.separator + "AwesomeFont" + File.separator +
+        // "fontawesome-webfont.ttf")) {
+        // awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+        // awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
+        // } catch (IOException | FontFormatException exp) {//
+        // exp.printStackTrace();
+        // }
+
+        saveBtn = new JButton("\uf0c7");
+        stepBack = new JButton("\uf048");
+        stepForward = new JButton("\uf051");
+        lineUp = new JButton("\uf062");
+        lineDown = new JButton("\uf063");
+        skipBack = new JButton("\uf0e2");
+        skipForward = new JButton("To End");
+        play = new JButton("\uf04b");
+        velocity = new JSlider();
+        triangulate = new JButton("Triangulate");
         initialize();
         setVisible(true);
     }
@@ -162,7 +198,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initialize() {
         // init main frame
         this.setTitle("Y-Monoton Polygon Algorithm Demonstrator");
-        this.setBounds(100, 100, 1200, 768);// dimension of Beamer + 2 so
+        this.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
                                             // Load-Btn doesnot disappear + alot
                                             // to show TriangulateBtn
         // frame.setMinimumSize(new Dimension(800, 1000));
@@ -214,31 +250,30 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         stepBack.setFont(awesomeFont);
         stepBack.setToolTipText("Go to previous line of code.");
         stepBack.addActionListener(this);
-        
+
         stepForward.setFont(awesomeFont);
         stepForward.setToolTipText("Go to next line of code.");
         stepForward.addActionListener(this);
-        
+
         lineUp.setFont(awesomeFont);
         lineUp.setToolTipText("Go to previous sweepline event.");
         lineUp.addActionListener(this);
-        
+
         lineDown.setFont(awesomeFont);
         lineDown.setToolTipText("Go to next sweepline event.");
         lineDown.addActionListener(this);
-        
+
         skipBack.setFont(awesomeFont);
         skipBack.setToolTipText("Skip to the beginning of the algorithm.");
         skipBack.addActionListener(this);
-        
+
         skipForward.setToolTipText("Skip to the end of the algorithm.");
         skipForward.addActionListener(this);
-        
+
         play.setFont(awesomeFont);
         play.setToolTipText("Automatically step through algorithm.");
         play.addActionListener(this);
-        
-        
+
         algorithmController = new JPanel();
         algorithmController.add(skipBack);
         algorithmController.add(lineUp);
@@ -255,7 +290,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         algorithmController.add(velocity);
 
         enableMenue(false);
-        
+
         triangulate.addActionListener(this);
         triangulate.setToolTipText("Triangulate y-monoton Polygon.");
 
@@ -284,20 +319,20 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         menue.setPreferredSize(new Dimension(600, 50));
         menue.setMinimumSize(new Dimension(1, 100));
     }
-    
-    private void enableMenue(boolean b) {
-    	stepBack.setEnabled(b);
-    	stepForward.setEnabled(b);
-    	lineUp.setEnabled(b);
-    	lineDown.setEnabled(b);
-    	skipBack.setEnabled(b);
-    	skipForward.setEnabled(b);
-    	play.setEnabled(b);
-    	velocity.setEnabled(b);
-    	triangulate.setEnabled(b);
-	}
 
-	private void initDrawPanel() {
+    private void enableMenue(boolean b) {
+        stepBack.setEnabled(b);
+        stepForward.setEnabled(b);
+        lineUp.setEnabled(b);
+        lineDown.setEnabled(b);
+        skipBack.setEnabled(b);
+        skipForward.setEnabled(b);
+        play.setEnabled(b);
+        velocity.setEnabled(b);
+        triangulate.setEnabled(b);
+    }
+
+    private void initDrawPanel() {
         sweepLine = new PolygonDrawPanel();
     }
 
@@ -330,14 +365,12 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
 
         if (polygonDrawn) {
-        	setPolygonText();
+            setPolygonText();
             saveBtn.setEnabled(true);
         }
 
         methodPanel.setMethod(Method.START);
 
-        
-        
         // draw the polygon
         sweepLine.setP(p);
         sweepLine.repaint();
@@ -353,14 +386,14 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     private void setPolygonText() {
-		String s = "polygon ";
-		for (int i = 0; i < p.npoints; i++) {
-			 s += p.xpoints[i] + "," + p.ypoints[i] + " ";
-		}
-		drawnPolygonText = s;
-	}
+        String s = "polygon ";
+        for (int i = 0; i < p.npoints; i++) {
+            s += p.xpoints[i] + "," + p.ypoints[i] + " ";
+        }
+        drawnPolygonText = s;
+    }
 
-	private void reset() {
+    private void reset() {
         currentSLPosition = -1;
         currentLinePosition = -1;
         currentSweepLineEvent = null;
@@ -370,7 +403,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         reachedEnd = false;
         methodPanel.setMethod(Method.START);
     }
-    
+
     // -- handling algorithm flow -- handling algorithm flow -- handling
     // algorithm flow --
     @Override
@@ -394,6 +427,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                 isPaused = pausing;
                 playClicked();
             } else if (e.getSource() == triangulate) {
+                System.out.println("actionlistener");
                 triangulate();
             }
         }
@@ -407,43 +441,69 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     public void triangulate() {
+        System.out.println("event tria");
         LinkedList<Point2D> points = praeComputer.getSamplePolygon();
-        
-//        //getListOfPoints(p);
-//        LinkedList<Edge> diags = praeComputer.getDiagonals();
-//        diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
-//        Polygon right = p;
-//        LinkedList<Polygon> yPolygons = new LinkedList<Polygon>();
-//        for (Edge d : diags) {
-//            Polygon l = getLeftSubPolygon(d, right);
-//            yPolygons.add(l);
-//            System.out.println("l " + l.npoints);
-//            right = getRightSubPolygon(d, right);
-//            if (d == diags.getLast()) {
-//                yPolygons.add(right);
-//            }
-//        }
-//        
-//        for (int i = 0; i < yPolygons.size(); i++) {
-//            System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
-//        }
-//        
-//        System.out.println("diags? " + diags.toString());
-//       
-        
+
+        // //getListOfPoints(p);
+        // LinkedList<Edge> diags = praeComputer.getDiagonals();
+        // diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
+        // Polygon right = p;
+        // LinkedList<Polygon> yPolygons = new LinkedList<Polygon>();
+        // for (Edge d : diags) {
+        // Polygon l = getLeftSubPolygon(d, right);
+        // yPolygons.add(l);
+        // System.out.println("l " + l.npoints);
+        // right = getRightSubPolygon(d, right);
+        // if (d == diags.getLast()) {
+        // yPolygons.add(right);
+        // }
+        // }
+        //
+        // for (int i = 0; i < yPolygons.size(); i++) {
+        // System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
+        // }
+        //
+        System.out.println("diags? ");
+
         Polygon poly = new Polygon();
         for (Point2D p : points) {
-        	poly.addPoint((int) p.getX(), (int) p.getY());
+            poly.addPoint((int) p.getX(), (int) p.getY());
         }
         initAlgorithm(poly);
-        //Triangulator.triangulateMonotone(points);
+
+        triangulatePanel = new JPanel();
+        triangulatePanel = Main.getTriangulationViewerOf(points);
+        triangulatePanel.setBounds(10, 10, 768, 400);
+        triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        triangulatePanel.setPreferredSize(new Dimension(768, 400));
+
+        JFrame triaFrame = new JFrame("Triangulator");
+        triaFrame.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
+        // Load-Btn doesnot disappear + alot
+        // to show TriangulateBtn
+        // frame.setMinimumSize(new Dimension(800, 1000));
+        triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        triaFrame.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weighty = 1.0;
+        c.weightx = 1.0;
+        triaFrame.add(triangulatePanel, c);
+        this.doLayout();
+        System.out.println("\n conps " + triangulatePanel);
+        System.out.println("jpanel " + sweepLine);
+        repaint();
+        triangulatePanel.repaint();
+        triaFrame.setVisible(true);;
+        // Triangulator.triangulateMonotone(points);
         // TODO
     }
-    
 
     private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) {
         LinkedList<Point> ps = new LinkedList<Point>();
-        
+
         Polygon leftPoly = new Polygon();
         ps.add(new Point(diagonal.getEndVertex().getX(), diagonal.getEndVertex().getY()));
         ps.add(new Point(diagonal.getStartVertex().getX(), diagonal.getStartVertex().getY()));
@@ -453,7 +513,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             currEdge = currEdge.getStartVertex().getPrevEdge();
         }
         Point[] points = ps.toArray(new Point[0]);
-        for(int i = points.length - 1; i >= 0; i--) {
+        for (int i = points.length - 1; i >= 0; i--) {
             leftPoly.addPoint(points[i].x, points[i].y);
         }
         return leftPoly;
@@ -470,14 +530,14 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
         return rightPoly;
     }
-    
+
     private LinkedList<Point2D> getListOfPoints(Polygon poly) {
         LinkedList<Point2D> points = new LinkedList<Point2D>();
         for (int i = 0; i < poly.npoints; i++) {
             Point2D pt = new Point(poly.xpoints[i], poly.ypoints[i]);
             points.add(pt);
         }
-        
+
         return points;
     }
 
@@ -487,7 +547,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             play.setText("\uf04c");
             play.setToolTipText("Pause algorithm.");
         } else {
-        	resetPlay();
+            resetPlay();
         }
 
         new Thread() {
@@ -521,7 +581,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     private void resetPlay() {
         isPaused = true;
-        //play.setText("Play");
+        // play.setText("Play");
         play.setText("\uf04b");
         play.setToolTipText("Automatically step through algorithm.");
     }
@@ -776,43 +836,43 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         if (inDrawMode) {
             int eX = e.getX();
             int eY = e.getY();
-            if (p.npoints >= 1) {            	
-            	int xLast = p.xpoints[p.npoints - 1];
-            	int yLast = p.ypoints[p.npoints - 1];
-            	if ((Math.abs(eX - xLast) + Math.abs(eY - yLast)) < 10) {
-            		removeLastPoint();
-            		return;
-            	}
+            if (p.npoints >= 1) {
+                int xLast = p.xpoints[p.npoints - 1];
+                int yLast = p.ypoints[p.npoints - 1];
+                if ((Math.abs(eX - xLast) + Math.abs(eY - yLast)) < 10) {
+                    removeLastPoint();
+                    return;
+                }
             }
-            
+
             if (p.npoints >= 3) {
-            	int xLast = p.xpoints[p.npoints - 1];
-            	int yLast = p.ypoints[p.npoints - 1];
+                int xLast = p.xpoints[p.npoints - 1];
+                int yLast = p.ypoints[p.npoints - 1];
                 int x = p.xpoints[0];
                 int y = p.ypoints[0];
-                                
+
                 if ((Math.abs(eX - x) + Math.abs(eY - y)) < 10) {
                     sweepLine.drawLine(p.xpoints[0], p.ypoints[0], xLast, yLast);
                     endDrawMode();
                     return;
                 }
-  
+
             }
             addPoint(eX, eY);
         }
     }
 
     private void removeLastPoint() {
-		sweepLine.removeLastPoint();
-		sweepLine.repaint();
-		Polygon newPoly = new Polygon();
-		for (int i = 0; i < p.npoints - 1; i++) {
-			newPoly.addPoint(p.xpoints[i], p.ypoints[i]);
-		}
-		p = newPoly;
-	}
+        sweepLine.removeLastPoint();
+        sweepLine.repaint();
+        Polygon newPoly = new Polygon();
+        for (int i = 0; i < p.npoints - 1; i++) {
+            newPoly.addPoint(p.xpoints[i], p.ypoints[i]);
+        }
+        p = newPoly;
+    }
 
-	private void addPoint(int eX, int eY) {
+    private void addPoint(int eX, int eY) {
         p.addPoint(eX, eY);
         sweepLine.drawPoint(eX, eY);
         if (p.npoints >= 2) {
