@@ -1,5 +1,5 @@
 package yMonotonePolygon;
-import controller.Main;
+
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -51,7 +51,6 @@ import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 import yMonotonePolygon.PraeComputation.Reader;
 
-//import algo.Triangulator;
 
 public class YMonotonePolygonGUI extends JFrame implements ActionListener, MouseListener {
     private static final long serialVersionUID = -5073162102279789347L;
@@ -182,7 +181,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         lineUp = new JButton("\uf062");
         lineDown = new JButton("\uf063");
         skipBack = new JButton("\uf0e2");
-        skipForward = new JButton("To End");
+        skipForward = new JButton("\uf14a");
         play = new JButton("\uf04b");
         velocity = new JSlider();
         triangulate = new JButton("Triangulate");
@@ -472,7 +471,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         initAlgorithm(poly);
 
         triangulatePanel = new JPanel();
-        triangulatePanel = Main.getTriangulationViewerOf(points);
+      //  triangulatePanel = Main.getTriangulationViewerOf(points);
         triangulatePanel.setBounds(10, 10, 768, 400);
         triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         triangulatePanel.setPreferredSize(new Dimension(768, 400));
