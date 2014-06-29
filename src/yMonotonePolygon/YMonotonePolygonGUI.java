@@ -180,11 +180,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         stepForward = new JButton("\uf051");
         lineUp = new JButton("\uf062");
         lineDown = new JButton("\uf063");
-        skipBack = new JButton("\uf0e2");
+        skipBack = new JButton("\uf0e2");//\uf0e2");
         skipForward = new JButton("\uf14a");
         play = new JButton("\uf04b");
+        triangulate = new JButton("\uf1e0");
         velocity = new JSlider();
-        triangulate = new JButton("Triangulate");
         initialize();
         setVisible(true);
     }
@@ -289,6 +289,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
         enableMenue(false);
 
+        triangulate.setFont(awesomeFont);
         triangulate.addActionListener(this);
         triangulate.setToolTipText("Triangulate y-monoton Polygon.");
 
@@ -426,7 +427,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                 isPaused = pausing;
                 playClicked();
             } else if (e.getSource() == triangulate) {
-                System.out.println("actionlistener");
                 triangulate();
             }
         }
@@ -443,6 +443,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
         LinkedList<Point2D> points = praeComputer.getSamplePolygon();
 
+        
         
         // //getListOfPoints(p);
         // LinkedList<Edge> diags = praeComputer.getDiagonals();
@@ -470,8 +471,16 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
         initAlgorithm(poly);
 
+        double currXMin = points.get(0).getX();
+        for (Point2D p : points) {
+            if (currXMin >= p.getX())
+                currXMin = p.getX();
+        }
+        for (int i = 0; i < points.size(); i++) {
+            points.set(i, new Point2D.Double(points.get(i).getX() - currXMin,points.get(i).getY()));
+        }
         triangulatePanel = new JPanel();
-      //  triangulatePanel = Main.getTriangulationViewerOf(points);
+        triangulatePanel = Main.getTriangulationViewerOf(points);
         triangulatePanel.setBounds(10, 10, 768, 400);
         triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         triangulatePanel.setPreferredSize(new Dimension(768, 400));
@@ -479,7 +488,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         JFrame triaFrame = new JFrame("Triangulator");
         triaFrame.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
         // Load-Btn doesnot disappear + alot to show TriangulateBtn
-        triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         triaFrame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -764,9 +773,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private static final String END_OF_ALGORITHM = "Reached the end of the algorithm!";
 
     private String[] getEndLines() {
-        String[] lines = new String[2];
+        String[] lines = new String[3];
+ 
         lines[0] = "Input: Polygon with " + currentHistory.size() + " vertices";
         lines[1] = "Output: added " + diagonals.size() + " diagonals";
+        lines[2] = "To triangulate one of the y-monotone Polygons press the triangulate button on the right."; 
         return lines;
     }
 
