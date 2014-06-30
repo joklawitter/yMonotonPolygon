@@ -544,6 +544,7 @@ public class PraeComputer {
 		points.removeLast(); // last left and last right were the same
 		
 		yMontoneSamplePolygon = points;
+		System.out.println("Computet polygon: ");
 		for (Point2D p : points) {
 			System.out.print(p + ", ");
 		}
@@ -562,7 +563,6 @@ public class PraeComputer {
 				continue;
 			}
 			
-			System.out.println(e);
 			if (upper == null) {
 				upper = other;
 				curDiag = e;
@@ -572,8 +572,12 @@ public class PraeComputer {
 			}
 		}
 		
+		if (upper == null) {
+			return null;
+		}
+		
 		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
-				&& (!Geometry.liesLeftOfLine(lower.getNextEdge(), other))) {
+				&& (!Geometry.liesLeftOfLine(lower.getNextEdge(), upper))) {
 			curDiag = lower.getNextEdge();
 		}
 		
@@ -593,7 +597,6 @@ public class PraeComputer {
 				continue;
 			}
 			
-			System.out.println(e);
 			if (upper == null) {
 				upper = other;
 				curDiag = e;
@@ -603,9 +606,13 @@ public class PraeComputer {
 			}
 		}
 		
-		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
-				&& (Geometry.liesLeftOfLine(lower.getNextEdge(), other))) {
-			curDiag = lower.getNextEdge();
+		if (upper == null) {
+			return lower.getPrevEdge();
+		}
+		
+		if ((Geometry.isLowerThan(lower, lower.getPrevEdge().getEndVertex())) 
+				&& (Geometry.liesLeftOfLine(lower.getPrevEdge(), upper))) {
+			curDiag = lower.getPrevEdge();
 		}
 		
 		return curDiag;
