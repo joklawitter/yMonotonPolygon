@@ -156,13 +156,14 @@ public class MethodPanel extends JPanel {
 	public void setBooleanLineTrue(int lineNumber) {
 		checkLineNumber(lineNumber);
 		trueLine = lineNumber;
-		
+		lines[trueLine].setForeground(Color.white);
 		lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 	}
 	
 	public void setBooleanLineFalse(int lineNumber) {
 		checkLineNumber(lineNumber);
 		falseLine = lineNumber;
+		lines[falseLine].setForeground(Color.white);
 		lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);	
 	}
 	

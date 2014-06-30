@@ -21,15 +21,11 @@ public class Reader {
 		return p;
 	}
 	
-	public static Polygon readPolygon(String adress) {
+	public static Polygon readPolygon(String adress) throws IOException {
 		Polygon p = null;
 		System.out.println("readPolygon adress: " + adress);
-		try {
-			p = FileInputReader.readInputFile(adress);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		p = FileInputReader.readInputFile(adress);
+		
 		/*for (int i = 0; i < p.npoints; i++) {
 			System.out.println("Point " + p.xpoints[i] + ", " + p.ypoints[i]);
 		}*/

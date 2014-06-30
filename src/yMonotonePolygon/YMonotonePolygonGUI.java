@@ -32,7 +32,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import controller.Main;
-import algo.Triangulator;
 import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
 import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
@@ -360,7 +359,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         } catch (IllegalPolygonException e) {
             sweepLine.clear();
             resetSave(); // there is nothing to save
-            methodPanel.setMethod(Method.ERROR);
+            methodPanel.setMethod(Method.ERROR_NOT_SIMPLE);
+            methodPanel.setBooleanLineFalse(0);
             return;
         }
 
@@ -908,7 +908,16 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
 
         // load file
-        Polygon p = Reader.readPolygon(address);
+        Polygon p;
+		try {
+			p = Reader.readPolygon(address);
+		} catch (IOException e) {
+            sweepLine.clear();
+            resetSave(); // there is nothing to save
+            methodPanel.setMethod(Method.ERROR_ILLEGAL_FILE);
+            methodPanel.setBooleanLineFalse(0);
+            return;
+		}
 
         // we loaded something, so we do not have to save it
         resetSave();

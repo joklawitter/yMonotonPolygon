@@ -50,10 +50,16 @@ public enum Method {
 					"- Click near the start point to close the polygon.",
 					"- Click near last drawn point to remove it from polygon.",
 					"Be aware that the polygon should be simple, i.e. there are no self intersections."}), 
-	ERROR ("Illegal Polygon",
+	ERROR_NOT_SIMPLE ("Illegal Polygon",
 			new String[]
 					{"The polygon may not intersect itself!",
-					"File must be in correct format!"}),
+					"Make sure that the polygon is simple.",
+					"To avoid intersections in draw mode click near the last set point to undo it."}),
+	ERROR_ILLEGAL_FILE ("Illegal File",
+			new String[]
+					{"File must be in correct format!",
+					"- .txt File",
+					"- example: \"polygon 150,100 100,150 150,200 200,150\" "}),				
 	START ("Y-Monotone Polygon Algorithm",
 			new String[]
 					{"Press PLAY or go step by step or event by event through the algorithm. "});

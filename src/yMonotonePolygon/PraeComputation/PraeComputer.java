@@ -72,7 +72,7 @@ public class PraeComputer {
 	 */
 	public boolean work(Polygon p) throws IllegalPolygonException {
 		if (p == null) {
-			throw new IllegalPolygonException("Not polygon given!");
+			throw new IllegalPolygonException("No polygon given!");
 		}
 		
 		
