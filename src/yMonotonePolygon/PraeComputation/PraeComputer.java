@@ -562,14 +562,21 @@ public class PraeComputer {
 				continue;
 			}
 			
+			System.out.println(e);
 			if (upper == null) {
 				upper = other;
 				curDiag = e;
-			} else if (!Geometry.liesLeftOfLine(curDiag, other)) {
+			} else if (!Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
 				upper = other;
 				curDiag = e;
 			}
 		}
+		
+		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
+				&& (!Geometry.liesLeftOfLine(lower.getNextEdge(), other))) {
+			curDiag = lower.getNextEdge();
+		}
+		
 		return curDiag;
 	}
 
@@ -586,14 +593,21 @@ public class PraeComputer {
 				continue;
 			}
 			
+			System.out.println(e);
 			if (upper == null) {
 				upper = other;
 				curDiag = e;
-			} else if (Geometry.liesLeftOfLine(curDiag, other)) {
+			} else if (Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
 				upper = other;
 				curDiag = e;
 			}
 		}
+		
+		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
+				&& (Geometry.liesLeftOfLine(lower.getNextEdge(), other))) {
+			curDiag = lower.getNextEdge();
+		}
+		
 		return curDiag;
 	}
 
