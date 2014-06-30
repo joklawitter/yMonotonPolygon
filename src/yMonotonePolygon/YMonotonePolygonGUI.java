@@ -443,33 +443,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
         LinkedList<Point2D> points = praeComputer.getSamplePolygon();
 
-        
-        
-        // //getListOfPoints(p);
-        // LinkedList<Edge> diags = praeComputer.getDiagonals();
-        // diags = (LinkedList<Edge>) Quicksort.quicksort(diags);
-        // Polygon right = p;
-        // LinkedList<Polygon> yPolygons = new LinkedList<Polygon>();
-        // for (Edge d : diags) {
-        // Polygon l = getLeftSubPolygon(d, right);
-        // yPolygons.add(l);
-        // System.out.println("l " + l.npoints);
-        // right = getRightSubPolygon(d, right);
-        // if (d == diags.getLast()) {
-        // yPolygons.add(right);
-        // }
-        // }
-        //
-        // for (int i = 0; i < yPolygons.size(); i++) {
-        // System.out.println("yPoly " + i + " : "+ yPolygons.get(i).npoints);
-        // }
-        //
-
         Polygon poly = new Polygon();
         for (Point2D p : points) {
             poly.addPoint((int) p.getX(), (int) p.getY());
         }
-        initAlgorithm(poly);
+        //initAlgorithm(poly);
 
         double currXMin = points.get(0).getX();
         for (Point2D p : points) {
@@ -477,7 +455,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                 currXMin = p.getX();
         }
         for (int i = 0; i < points.size(); i++) {
-            points.set(i, new Point2D.Double(points.get(i).getX() - currXMin,points.get(i).getY()));
+            points.set(i, new Point2D.Double(points.get(i).getX() - currXMin, points.get(i).getY()));
         }
         triangulatePanel = new JPanel();
         triangulatePanel = Main.getTriangulationViewerOf(points);

@@ -573,7 +573,7 @@ public class PraeComputer {
 		}
 		
 		if (upper == null) {
-			return null;
+			return lower.getNextEdge();
 		}
 		
 		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
