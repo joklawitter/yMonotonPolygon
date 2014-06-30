@@ -889,7 +889,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         int returnVal = chooser.showOpenDialog(this);
         String address = null;
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            address = chooser.getSelectedFile().getName();
+            address = chooser.getSelectedFile().getAbsolutePath();
         }
 
         if (address == null) {

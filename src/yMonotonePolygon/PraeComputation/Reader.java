@@ -25,7 +25,7 @@ public class Reader {
 		Polygon p = null;
 		System.out.println("readPolygon adress: " + adress);
 		try {
-			p = FileInputReader.readInputFile("PolygonExamples/" +  adress);
+			p = FileInputReader.readInputFile(adress);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
