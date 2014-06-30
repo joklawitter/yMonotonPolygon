@@ -1,0 +1,11 @@
+A little java application for the visualization of the algorithm for dividing a (regular) polygon
+into y-monotone ones by adding diagonals. It illustrates the algorithm of the book
+Computational Geometry by de Berg, Cheong, van Kreveld and Overmars, chapter 3.
+
+You can either load an example polygon or draw your own polygon for the algorithm.
+Then it will go along the sweep line events through the vertices of the polygon. 
+Thereby every line of the code for every vertex is handled solely.
+
+The application is the outcome of a little students project in the lecture
+'Algorithmische Geometrie' at the Institute of Theoretical Informatics
+ of the Karlsruhe Institute for Technology (KIT) in summer semester 2014.
