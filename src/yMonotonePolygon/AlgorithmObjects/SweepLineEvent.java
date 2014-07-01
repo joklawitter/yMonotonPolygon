@@ -6,6 +6,11 @@ import java.util.TreeSet;
 
 import yMonotonePolygon.AlgorithmObjects.VertexType;
 
+/**
+ * A SweepLineEvent represents one event in the algorithm logically.
+ * Contains the current vertex, the SubEvents, the number of drawn diagonals
+ * and previously handled events, and the active edges.
+ */
 public class SweepLineEvent {
 	// first, what has already been drawn & sweep line status
 	private int numberOfDiagonals;

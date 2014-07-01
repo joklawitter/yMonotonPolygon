@@ -22,6 +22,13 @@ import javax.swing.JPanel;
 import yMonotonePolygon.AlgorithmObjects.Edge;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 
+/**
+ * Main drawing panel of the GUI.
+ * Can be in draw or algorithm mode. Draws either the currently drawn polygon
+ * or the one set for the algorithm. 
+ * In algorithm mode you can set diagonals, number of drawn diagonals,
+ * current active edges and their helpers. *
+ */
 public class PolygonDrawPanel extends JPanel {
 
 	private static final long serialVersionUID = 3139953215271841299L;

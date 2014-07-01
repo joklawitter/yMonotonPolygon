@@ -50,7 +50,10 @@ import yMonotonePolygon.PraeComputation.IllegalPolygonException;
 import yMonotonePolygon.PraeComputation.PraeComputer;
 import yMonotonePolygon.PraeComputation.Reader;
 
-
+/**
+ * Main class of the project.
+ * Represents GUI main frame and event handler.
+ */
 public class YMonotonePolygonGUI extends JFrame implements ActionListener, MouseListener {
     private static final long serialVersionUID = -5073162102279789347L;
 
@@ -360,7 +363,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             sweepLine.clear();
             resetSave(); // there is nothing to save
             methodPanel.setMethod(Method.ERROR_NOT_SIMPLE);
-            methodPanel.setBooleanLineFalse(0);
+            methodPanel.setRedLine(0);
             return;
         }
 

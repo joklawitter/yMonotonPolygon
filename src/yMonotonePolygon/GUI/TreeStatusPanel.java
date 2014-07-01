@@ -15,6 +15,10 @@ import javax.swing.JPanel;
 
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 
+/**
+ * Panel to show the sweep line data structure
+ * in simplified form (not a tree).
+ */
 public class TreeStatusPanel extends JPanel {
 
     private static final long serialVersionUID = -8798865147286388642L;
