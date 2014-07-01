@@ -11,6 +11,11 @@ import javax.swing.JTextPane;
 
 import yMonotonePolygon.AlgorithmObjects.Method;
 
+/**
+ * Method panel in the GUI.
+ * Presents the methods and info texts.
+ * Has a title and array of lines. You can highlight a current line
+ */
 public class MethodPanel extends JPanel {
 	
 	private static final long serialVersionUID = 7889627964419596500L;
@@ -156,8 +161,17 @@ public class MethodPanel extends JPanel {
 	public void setBooleanLineFalse(int lineNumber) {
 		checkLineNumber(lineNumber);
 		falseLine = lineNumber;
+		setRedLine(lineNumber);
+		checkLineNumber(lineNumber + 1);
+		lines[falseLine + 1].setForeground(Color.GRAY);
+	}
+	
+	public void setRedLine(int lineNumber) {
+		checkLineNumber(lineNumber);
+
 		lines[falseLine].setForeground(Color.white);
 		lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);	
+
 	}
 	
 	public void grayOutLine(int lineNumber) {

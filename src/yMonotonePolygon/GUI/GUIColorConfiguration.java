@@ -4,6 +4,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * GUI helper class for colors.
+ * Defines some specific colors used in the GUI
+ * and a random color method.
+ * @author Jopunkt
+ *
+ */
 public final class GUIColorConfiguration {
 
 	public static final Color EDGE_STD_COLOR = Color.BLACK;
@@ -38,8 +45,6 @@ public final class GUIColorConfiguration {
 	public static final Color FALSE_LINE = new Color(255, 43, 0);
 	public static final Color HIGHLIGHTED_LINE = new Color(230,230,230);
 	
-	
-	
 	public static final ArrayList<Color> COLORS;
 	
 	static {
@@ -48,6 +53,8 @@ public final class GUIColorConfiguration {
 		COLORS.add(Color.GREEN);
 		COLORS.add(Color.MAGENTA);
 		COLORS.add(Color.CYAN);
+		COLORS.add(Color.BLUE);		
+		COLORS.add(Color.ORANGE);			
 		COLORS.add(new Color(176, 125, 55)); // brown
 		COLORS.add(new Color(53, 133, 64)); // dark green
 		COLORS.add(new Color(125, 255, 142)); // other green
@@ -57,8 +64,7 @@ public final class GUIColorConfiguration {
 		COLORS.add(new Color(41, 191, 255)); // other blue
 		COLORS.add(new Color(58, 201, 201)); // other blue
 		COLORS.add(new Color(255, 191, 0)); // gold
-		COLORS.add(new Color(132, 0, 255)); // lila
-		
+		COLORS.add(new Color(132, 0, 255)); // lila	
 	}
 	
 	public static Color getRandomColor() {

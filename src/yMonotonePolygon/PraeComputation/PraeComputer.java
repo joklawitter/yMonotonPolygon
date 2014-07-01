@@ -20,6 +20,11 @@ import yMonotonePolygon.AlgorithmObjects.UpdateInsertTreeSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Vertex;
 import yMonotonePolygon.GUI.GUIColorConfiguration;
 
+/**
+ * The PraeComputer is the main worker of the application.
+ * Given a polygon it checks its correctness and then computes the
+ * history of the algorithm for this polygon.
+ */
 public class PraeComputer {
 	
 	/** input polygon */

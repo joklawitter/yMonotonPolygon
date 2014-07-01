@@ -1,5 +1,10 @@
 package yMonotonePolygon.AlgorithmObjects;
 
+/**
+ * Enum to store all the handle methods and some info texts.
+ * @author Jopunkt
+ *
+ */
 public enum Method {
 	HANDLE_START ("handleStartVertex(v)",
 			new String[] 
