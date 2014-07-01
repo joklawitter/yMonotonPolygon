@@ -137,29 +137,25 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	e.printStackTrace();
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (UnsupportedLookAndFeelException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // try {
-        // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        // } catch (ClassNotFoundException | InstantiationException |
-        // IllegalAccessException | UnsupportedLookAndFeelException e) {
-        // }
-
+        
         InputStream is = new FileInputStream(System.getProperty("user.dir") + File.separator + "AwesomeFont"
                 + File.separator + "fontawesome-webfont.ttf");
-        try {
-            awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
-        } catch (FontFormatException e) {
+		try {
+
+			awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+					
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (FontFormatException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
@@ -167,15 +163,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             e.printStackTrace();
         }
         awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
-        // try (InputStream is = new
-        // FileInputStream(System.getProperty("user.dir")
-        // + File.separator + "AwesomeFont" + File.separator +
-        // "fontawesome-webfont.ttf")) {
-        // awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
-        // awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
-        // } catch (IOException | FontFormatException exp) {//
-        // exp.printStackTrace();
-        // }
 
         saveBtn = new JButton("\uf0c7");
         stepBack = new JButton("\uf048");
