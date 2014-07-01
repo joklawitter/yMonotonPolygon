@@ -13,11 +13,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import java.net.URLDecoder;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -132,8 +134,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
      * 
      * @throws FileNotFoundException
      */
-    public YMonotonePolygonGUI() throws FileNotFoundException {
-
+    public YMonotonePolygonGUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -145,21 +146,16 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        
-        InputStream is = new FileInputStream(System.getProperty("user.dir") + File.separator + "AwesomeFont"
-                + File.separator + "fontawesome-webfont.ttf");
-		try {
 
-			awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
-					
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+        String s = "/yMonotonePolygon/AwesomeFont/fontawesome-webfont.ttf";
+        InputStream is = YMonotonePolygonGUI.class.getResourceAsStream(s);
+		try {
+			awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);	
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (FontFormatException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
@@ -185,15 +181,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initialize() {
         // init main frame
         this.setTitle("Y-Monoton Polygon Algorithm Demonstrator");
-        this.setBounds(100, 100, 1200, 768);// dimension of Beamer + 2 so
-                                            // Load-Btn doesnot disappear + alot
-                                            // to show TriangulateBtn
-        // frame.setMinimumSize(new Dimension(800, 1000));
+        this.setBounds(100, 100, 1085, 768);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new GridBagLayout());// new BoxLayout(getContentPane(),
-                                            // BoxLayout.PAGE_AXIS));
-        // frame.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+        this.setLayout(new GridBagLayout());
+        
         // init button panel
         initMenue();
         GridBagConstraints c = new GridBagConstraints();
@@ -454,9 +445,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         triangulatePanel.setPreferredSize(new Dimension(768, 400));
 
         JFrame triaFrame = new JFrame("Triangulator");
-        triaFrame.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
-        // Load-Btn doesnot disappear + alot to show TriangulateBtn
-//        triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        triaFrame.setBounds(100, 100, 1024, 550);
         triaFrame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -469,37 +458,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         triaFrame.repaint();
         triaFrame.setVisible(true);
     }
-
-    /*
-     * // private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) { //
-     * LinkedList<Point> ps = new LinkedList<Point>(); // // Polygon leftPoly =
-     * new Polygon(); // ps.add(new Point(diagonal.getEndVertex().getX(),
-     * diagonal.getEndVertex().getY())); // ps.add(new
-     * Point(diagonal.getStartVertex().getX(),
-     * diagonal.getStartVertex().getY())); // Edge currEdge =
-     * diagonal.getStartVertex().getPrevEdge(); // while
-     * (currEdge.getStartVertex() != diagonal.getEndVertex()) { // ps.add(new
-     * Point(currEdge.getStartVertex().getX(),
-     * currEdge.getStartVertex().getY())); // currEdge =
-     * currEdge.getStartVertex().getPrevEdge(); // } // Point[] points =
-     * ps.toArray(new Point[0]); // for(int i = points.length - 1; i >= 0; i--)
-     * { // leftPoly.addPoint(points[i].x, points[i].y); // } // return
-     * leftPoly; // } // // private Polygon getRightSubPolygon(Edge diagonal,
-     * Polygon poly) { // Polygon rightPoly = new Polygon(); //
-     * rightPoly.addPoint(diagonal.getStartVertex().getX(),
-     * diagonal.getStartVertex().getY()); //
-     * rightPoly.addPoint(diagonal.getEndVertex().getX(),
-     * diagonal.getEndVertex().getY()); // Edge currEdge =
-     * diagonal.getEndVertex().getNextEdge(); // while (currEdge.getEndVertex()
-     * != diagonal.getStartVertex()) { //
-     * rightPoly.addPoint(currEdge.getEndVertex().getX(),
-     * currEdge.getEndVertex().getY()); // currEdge =
-     * currEdge.getEndVertex().getNextEdge(); // } // return rightPoly; // } //
-     * // private LinkedList<Point2D> getListOfPoints(Polygon poly) { //
-     * LinkedList<Point2D> points = new LinkedList<Point2D>(); // for (int i =
-     * 0; i < poly.npoints; i++) { // Point2D pt = new Point(poly.xpoints[i],
-     * poly.ypoints[i]); // points.add(pt); // } // // return points; // }
-     */
 
     public void playClicked() {
         isPaused = !isPaused;
@@ -523,7 +481,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                     repaint();
                     methodPanel.repaint();
                     time = (int) ((velocity.getMaximum() - velocity.getValue() + 1) * 15.0);
-                    System.out.println("time " + time);
+                   // System.out.println("time " + time);
                     if (currentSLPosition == currentHistory.size()) {
                         drawEverything();
                         resetPlay();
@@ -554,7 +512,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
                                        // event
             skipToNextEvent();
         } else { // else go one line further
-            System.out.println("stepForward SL: " + (currentSLPosition + 1) + " Line: " + (currentLinePosition + 1));
+          //  System.out.println("stepForward SL: " + (currentSLPosition + 1) + " Line: " + (currentLinePosition + 1));
             currentLinePosition += 1;
             // check if we are at the last line
 
@@ -577,7 +535,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     public void stepBackClicked() {
         reachedEnd = false;
-        System.out.println("stepBack SL: " + (currentSLPosition + 1) + " Line: " + (currentLinePosition));
+        //System.out.println("stepBack SL: " + (currentSLPosition + 1) + " Line: " + (currentLinePosition));
         if (currentSLPosition < 0) {
             return;
         }
@@ -594,7 +552,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     public void lineUpClicked() {
         reachedEnd = false;
 
-        System.out.println("lineUp");
+        //System.out.println("lineUp");
         if (currentSLPosition >= 1) {
             skipToPreviousEvent();
         } else {
@@ -615,7 +573,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     private void skipToNextEvent() {
         currentSLPosition++;
-        System.out.println("nextEvent: " + (currentSLPosition + 1));
+        //System.out.println("nextEvent: " + (currentSLPosition + 1));
         currentSweepLineEvent = currentHistory.get(currentSLPosition);
         currentLinePosition = -1; // start with line -1, then in next step skip
                                   // to line 1
@@ -662,7 +620,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     }
 
     private void handleSubEvent(SubEvent subEvent) {
-        System.out.println("> nextSubEvent: " + (subEvent.getLine() + 1));
+       // System.out.println("> nextSubEvent: " + (subEvent.getLine() + 1));
         // highlight the current line
         methodPanel.highlightLine(subEvent.getLine());
         methodPanel.repaint();
@@ -707,12 +665,12 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
     // --- skip back and forward
     public void skipBackClicked() {
-        System.out.println("reset");
+        //System.out.println("reset");
         reset();
     }
 
     public void skipForwardClicked() {
-        System.out.println("End");
+        //System.out.println("End");
         drawEverything();
     }
 
@@ -724,8 +682,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         currentSLPosition = currentHistory.size() - 1;
         currentSweepLineEvent = currentHistory.get(currentSLPosition);
         currentLinePosition = currentSweepLineEvent.getNumberOfSteps();
-        // currentLinePosition = (currentLinePosition < 0) ? 0 :
-        // currentLinePosition;
         sweepLine.setNumberOfDiagonals(diagonals.size());
         sweepLine.setNumberOfHandledEvents(currentHistory.size()); // all
                                                                    // handled
@@ -863,8 +819,14 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text", "txt");
         chooser.setFileFilter(filter);
-        File workingDirectory = new File(System.getProperty("user.dir") + File.separator + "PolygonExamples");
-        chooser.setCurrentDirectory(workingDirectory);
+        try {
+        	String path = YMonotonePolygonGUI.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        	String decodedPath = URLDecoder.decode(path, "UTF-8");
+			File workingDirectory = new File(decodedPath);
+			chooser.setCurrentDirectory(workingDirectory);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
         int returnVal = chooser.showOpenDialog(this);
         String address = null;
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -888,7 +850,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 		}
 
         // we loaded something, so we do not have to save it
-        resetSave();
+		resetSave(); 
 
         // init algorithm
         initAlgorithm(p);
@@ -902,7 +864,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         if (retrival == JFileChooser.APPROVE_OPTION) {
             try {
                 if (drawnPolygonText == null) {
-                    System.out.println("Nothing to save...");
+                   // System.out.println("Nothing to save...");
                     return;
                 }
                 FileWriter fw = new FileWriter(chooser.getSelectedFile() + ".txt");

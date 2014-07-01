@@ -2,6 +2,7 @@ package yMonotonePolygon.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -36,9 +37,28 @@ public class MethodPanel extends JPanel {
 	public MethodPanel() {
 		init();
 	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		
+		if (highlightedLine >= 0) {
+		    lines[highlightedLine].setForeground(Color.black);
+			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
+		}
+		if (trueLine >= 0) {
+		    lines[trueLine].setForeground(Color.white);
+			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
+		}
+		if (falseLine >= 0) {
+		    lines[falseLine].setForeground(Color.white);
+			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);
+		}
+		
+	}
 	
 	private void init() {
-        //this.setMaximumSize(new Dimension(10000, 200));
         this.setPreferredSize(new Dimension(1000, 200));
         this.setMinimumSize(new Dimension(1, 200));
 		
@@ -56,7 +76,6 @@ public class MethodPanel extends JPanel {
 		resetLines();
 		this.add(titlePane);
 		this.add(linesContainerPanel);
-		//setSize(this.getSize().width, 150);
 	}
 
 	// -- getter -- setter --
@@ -150,8 +169,8 @@ public class MethodPanel extends JPanel {
 	public void setRedLine(int lineNumber) {
 		checkLineNumber(lineNumber);
 
-		lines[falseLine].setForeground(Color.white);
-		lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);	
+		lines[lineNumber].setForeground(Color.white);
+		lines[lineNumber].setBackground(GUIColorConfiguration.FALSE_LINE);	
 
 	}
 	

@@ -33,7 +33,6 @@ public class TreeStatusPanel extends JPanel {
     private Vertex searchPoint;
 
     public TreeStatusPanel() {
-        // this.setMaximumSize(new Dimension(10000, 40));
         this.setPreferredSize(new Dimension(600, 40));
         this.setMinimumSize(new Dimension(1, 40));
         this.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -61,8 +60,6 @@ public class TreeStatusPanel extends JPanel {
     }
 
     private void drawSearchLine(Graphics2D g2, Vertex v) {
-//        g2.drawLine(v.getX(), 0, v.getX(), this.getHeight());
-      //  g2.drawRect(v.getX() - 2, 0, 4, this.getHeight());
         g2.fillRect(v.getX(), 0, 3, this.getHeight());
     }
 
@@ -71,7 +68,6 @@ public class TreeStatusPanel extends JPanel {
         g2.setStroke(new BasicStroke(5));
         Ellipse2D.Double circle = new Ellipse2D.Double(v.getX() - (DIAMETER/2.0) + 1.5, Y_POSITION, DIAMETER, DIAMETER);
         g2.fill(circle);
-        // g2.drawOval(v.getX(), 20, 4, 4);
         g2.setStroke(s);
     }
 

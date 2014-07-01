@@ -22,9 +22,6 @@ public class SearchTree {
       root = null;
    }
 
-   /*private int compareAtY(Node one, Node two, int y) {
-      return compareAtY(one.getData(), two.getData(), y);
-   }*/
    private int compareAtY(Edge one, Edge two, int y) {
 	   return Double.compare(Geometry.computeXOfEdgeAtY(one, y), 
 				 			  Geometry.computeXOfEdgeAtY(two, y)); 
@@ -95,8 +92,6 @@ public class SearchTree {
     	  return null;
       }
 	  
-      //System.out.println("y = " + y + ", x = " + x + ", x of edge = " + Geometry.computeXOfEdgeAtY(p.getData(), y));
-      
       // this node to much to the right?
 	  if (Geometry.computeXOfEdgeAtY(p.getData(), y) > x) { // x lies to the left of this node
     	  return searchEdgeAtX(p.left, x, y);
@@ -116,22 +111,18 @@ public class SearchTree {
 	   if (toDelete == null) {
 		   throw new IllegalArgumentException();
 	   }
-	   //System.out.println("root? "+ root);
        root = delete(root, toDelete, toDelete.getEndVertex().getY());
    }
    
    private Node delete(Node p, Edge toDelete, int y) {
-       //System.out.println("root? "+ countLeaves() + " p " +p);
 	  if (p == null) {
 		  throw new AssertionError("No edge to delete found.");
 	  }
 	  
 	  if (p.getData().equals(toDelete)) {
 		  if (p.left == null) {
-		      //System.out.println("right p = root? " + p.right);
 	        	 return p.right; // right child will take place of node p
 	         } else if (p.right == null) {
-	             //System.out.println("left p = root? " + p.left);
 	        	 return p.left; // left child will take place of node p
 	         } else { // we get rightmost/leftmost node in the left/right subtree
 	        	 
@@ -145,7 +136,6 @@ public class SearchTree {
 		 	        p.right =  delete(p.right, p.getData(), y) ;
 	        	 }
 	         }
-		  //System.out.println("1p = root? " + p);
 		  return p;
 	  }
 	  
@@ -155,7 +145,6 @@ public class SearchTree {
     	  p.right = delete(p.right, toDelete, y);
     	  Double.compare(y, y);
       } 
-      //System.out.println("2p = root? " + p);
       return p;
    }
    

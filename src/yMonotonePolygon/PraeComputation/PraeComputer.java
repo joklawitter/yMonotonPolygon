@@ -106,11 +106,9 @@ public class PraeComputer {
 		activeEdges = new HashSet<Edge>();
 		handledVertices = 0;
 		
-		
 		// sort vertices y-x-lexicographical
 		// - happens automatically with natural ordering and TreeSet
 
-		
 		// run algorithm and create corresponding events
 		for (Vertex v : vertices) {
 			handleVertexEvent(v);
@@ -119,8 +117,7 @@ public class PraeComputer {
 		
 		assert (handledVertices == vertices.size());
 		
-		//System.out.println(toString());
-		
+
 		computeYMonotoneSamplePolygon();
 		
 		return true;
@@ -452,7 +449,6 @@ public class PraeComputer {
 		s += "]";
 		return s;
 	}
-
 	
 	private LinkedList<Point2D> yMontoneSamplePolygon;
 	
