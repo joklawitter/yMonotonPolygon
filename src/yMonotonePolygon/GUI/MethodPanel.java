@@ -43,10 +43,6 @@ public class MethodPanel extends JPanel {
 			lines[highlightedLine].setBackground(GUIColorConfiguration.HIGHLIGHTED_LINE);
 		}
 		if (trueLine >= 0) {
-//		    StyleContext context = new StyleContext();
-//		    Style style = context.addStyle("", null);
-//		    StyleConstants.setForeground(style, Color.white);
-		    
 		    lines[trueLine].setForeground(Color.white);
 			lines[trueLine].setBackground(GUIColorConfiguration.TRUE_LINE);
 		}
@@ -55,11 +51,9 @@ public class MethodPanel extends JPanel {
 			lines[falseLine].setBackground(GUIColorConfiguration.FALSE_LINE);
 		}
 		
-		//linesContainerPanel.revalidate();
 	}
 	
 	private void init() {
-        //this.setMaximumSize(new Dimension(10000, 200));
         this.setPreferredSize(new Dimension(1000, 200));
         this.setMinimumSize(new Dimension(1, 200));
 		
@@ -77,7 +71,6 @@ public class MethodPanel extends JPanel {
 		resetLines();
 		this.add(titlePane);
 		this.add(linesContainerPanel);
-		//setSize(this.getSize().width, 150);
 	}
 
 	// -- getter -- setter --

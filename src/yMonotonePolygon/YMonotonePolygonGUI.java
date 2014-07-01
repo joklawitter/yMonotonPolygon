@@ -146,11 +146,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // try {
-        // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        // } catch (ClassNotFoundException | InstantiationException |
-        // IllegalAccessException | UnsupportedLookAndFeelException e) {
-        // }
 
         InputStream is = new FileInputStream(System.getProperty("user.dir") + File.separator + "AwesomeFont"
                 + File.separator + "fontawesome-webfont.ttf");
@@ -164,15 +159,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             e.printStackTrace();
         }
         awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
-        // try (InputStream is = new
-        // FileInputStream(System.getProperty("user.dir")
-        // + File.separator + "AwesomeFont" + File.separator +
-        // "fontawesome-webfont.ttf")) {
-        // awesomeFont = Font.createFont(Font.TRUETYPE_FONT, is);
-        // awesomeFont = awesomeFont.deriveFont(Font.PLAIN, 14f);
-        // } catch (IOException | FontFormatException exp) {//
-        // exp.printStackTrace();
-        // }
 
         saveBtn = new JButton("\uf0c7");
         stepBack = new JButton("\uf048");
@@ -195,15 +181,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private void initialize() {
         // init main frame
         this.setTitle("Y-Monoton Polygon Algorithm Demonstrator");
-        this.setBounds(100, 100, 1200, 768);// dimension of Beamer + 2 so
-                                            // Load-Btn doesnot disappear + alot
-                                            // to show TriangulateBtn
-        // frame.setMinimumSize(new Dimension(800, 1000));
+        this.setBounds(100, 100, 1085, 768);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new GridBagLayout());// new BoxLayout(getContentPane(),
-                                            // BoxLayout.PAGE_AXIS));
-        // frame.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
+        this.setLayout(new GridBagLayout());
+        
         // init button panel
         initMenue();
         GridBagConstraints c = new GridBagConstraints();
@@ -464,9 +445,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         triangulatePanel.setPreferredSize(new Dimension(768, 400));
 
         JFrame triaFrame = new JFrame("Triangulator");
-        triaFrame.setBounds(100, 100, 1200, 550);// dimension of Beamer + 2 so
-        // Load-Btn doesnot disappear + alot to show TriangulateBtn
-//        triaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        triaFrame.setBounds(100, 100, 1024, 550);
         triaFrame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
@@ -480,36 +459,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         triaFrame.setVisible(true);
     }
 
-    /*
-     * // private Polygon getLeftSubPolygon(Edge diagonal, Polygon poly) { //
-     * LinkedList<Point> ps = new LinkedList<Point>(); // // Polygon leftPoly =
-     * new Polygon(); // ps.add(new Point(diagonal.getEndVertex().getX(),
-     * diagonal.getEndVertex().getY())); // ps.add(new
-     * Point(diagonal.getStartVertex().getX(),
-     * diagonal.getStartVertex().getY())); // Edge currEdge =
-     * diagonal.getStartVertex().getPrevEdge(); // while
-     * (currEdge.getStartVertex() != diagonal.getEndVertex()) { // ps.add(new
-     * Point(currEdge.getStartVertex().getX(),
-     * currEdge.getStartVertex().getY())); // currEdge =
-     * currEdge.getStartVertex().getPrevEdge(); // } // Point[] points =
-     * ps.toArray(new Point[0]); // for(int i = points.length - 1; i >= 0; i--)
-     * { // leftPoly.addPoint(points[i].x, points[i].y); // } // return
-     * leftPoly; // } // // private Polygon getRightSubPolygon(Edge diagonal,
-     * Polygon poly) { // Polygon rightPoly = new Polygon(); //
-     * rightPoly.addPoint(diagonal.getStartVertex().getX(),
-     * diagonal.getStartVertex().getY()); //
-     * rightPoly.addPoint(diagonal.getEndVertex().getX(),
-     * diagonal.getEndVertex().getY()); // Edge currEdge =
-     * diagonal.getEndVertex().getNextEdge(); // while (currEdge.getEndVertex()
-     * != diagonal.getStartVertex()) { //
-     * rightPoly.addPoint(currEdge.getEndVertex().getX(),
-     * currEdge.getEndVertex().getY()); // currEdge =
-     * currEdge.getEndVertex().getNextEdge(); // } // return rightPoly; // } //
-     * // private LinkedList<Point2D> getListOfPoints(Polygon poly) { //
-     * LinkedList<Point2D> points = new LinkedList<Point2D>(); // for (int i =
-     * 0; i < poly.npoints; i++) { // Point2D pt = new Point(poly.xpoints[i],
-     * poly.ypoints[i]); // points.add(pt); // } // // return points; // }
-     */
+  
 
     public void playClicked() {
         isPaused = !isPaused;
@@ -734,8 +684,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         currentSLPosition = currentHistory.size() - 1;
         currentSweepLineEvent = currentHistory.get(currentSLPosition);
         currentLinePosition = currentSweepLineEvent.getNumberOfSteps();
-        // currentLinePosition = (currentLinePosition < 0) ? 0 :
-        // currentLinePosition;
         sweepLine.setNumberOfDiagonals(diagonals.size());
         sweepLine.setNumberOfHandledEvents(currentHistory.size()); // all
                                                                    // handled

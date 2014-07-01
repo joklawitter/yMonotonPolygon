@@ -135,7 +135,6 @@ public class Geometry {
 			System.out.println(y + "-> " + e.toString());
 			throw new AssertionError("Does not lie in y-interval of edge: " + alpha);
 		}
-		//System.out.println("y = " + y + ", alpha = " + alpha);
 		return (a.getX() + alpha * (b.getX() - a.getX()));
 	}
 }

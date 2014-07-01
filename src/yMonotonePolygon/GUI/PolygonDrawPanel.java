@@ -84,7 +84,6 @@ public class PolygonDrawPanel extends JPanel {
 				}
 				
 				// but before helper
-				
 				if (currentVertex != null) {					
 					drawSweepLine(g2);
 					drawCurrentVertex(g2);

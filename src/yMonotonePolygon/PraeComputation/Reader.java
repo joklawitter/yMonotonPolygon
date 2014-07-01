@@ -15,9 +15,6 @@ public class Reader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*for (int i = 0; i < p.npoints; i++) {
-			System.out.println("Point " + p.xpoints[i] + ", " + p.ypoints[i]);
-		}*/
 		return p;
 	}
 	
@@ -26,9 +23,6 @@ public class Reader {
 		System.out.println("readPolygon adress: " + adress);
 		p = FileInputReader.readInputFile(adress);
 		
-		/*for (int i = 0; i < p.npoints; i++) {
-			System.out.println("Point " + p.xpoints[i] + ", " + p.ypoints[i]);
-		}*/
 		return p;
 	}
 }
