@@ -1,5 +1,6 @@
 package yMonotonePolygon;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -11,29 +12,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URLDecoder;
 import java.util.LinkedList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import controller.Main;
 import yMonotonePolygon.AlgorithmObjects.AddDiagonalSubEvent;
 import yMonotonePolygon.AlgorithmObjects.BooleanSubEvent;
 import yMonotonePolygon.AlgorithmObjects.Edge;
@@ -89,7 +88,6 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     // --- menu and buttons
     private Font awesomeFont;
     private JPanel menue;
-    private JPanel triangulatePanel;
     // menu and buttons | algorithm control
     private JPanel algorithmController;
     // public QButtonGroup algorithmController;
@@ -100,7 +98,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private final JButton skipBack;
     private final JButton skipForward;
     private final JButton play;
-    private final JButton triangulate;
+//    private JPanel triangulatePanel;
+//    private final JButton triangulate;
     private boolean isPaused;
     private final JSlider velocity;
     // menu and buttons | load polygon and draw polygon control
@@ -110,6 +109,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     private String drawnPolygonText;
     private final JButton saveBtn;
     private JButton loadData;
+
+    private final JButton aboutBtn;
 
     // --- method panel
     private MethodPanel methodPanel;
@@ -165,11 +166,12 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         stepForward = new JButton("\uf051");
         lineUp = new JButton("\uf062");
         lineDown = new JButton("\uf063");
-        skipBack = new JButton("\uf0e2");//\uf0e2");
+        skipBack = new JButton("\uf0e2");
         skipForward = new JButton("\uf14a");
         play = new JButton("\uf04b");
-        triangulate = new JButton("\uf1e0");
+        //   triangulate = new JButton("\uf1e0");
         velocity = new JSlider();
+        aboutBtn = new JButton("About");
         initialize();
         setVisible(true);
     }
@@ -269,9 +271,9 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
 
         enableMenue(false);
 
-        triangulate.setFont(awesomeFont);
-        triangulate.addActionListener(this);
-        triangulate.setToolTipText("Triangulate y-monoton Polygon.");
+//        triangulate.setFont(awesomeFont);
+//        triangulate.addActionListener(this);
+//        triangulate.setToolTipText("Triangulate y-monoton Polygon.");
 
         // loading input
         editBtn = new JButton("\uf040");
@@ -288,11 +290,15 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         loadData.addActionListener(this);
         loadData.setToolTipText("Load a polygon.");
 
+        aboutBtn.addActionListener(this);
+        aboutBtn.setToolTipText("Display some information about this application.");
+
         menue.add(algorithmController);
         menue.add(editBtn);
         menue.add(saveBtn);
         menue.add(loadData);
-        menue.add(triangulate);
+       // menue.add(triangulate);
+        menue.add(aboutBtn);
 
         // menue.setMaximumSize(new Dimension(10000, 50));
         menue.setPreferredSize(new Dimension(600, 50));
@@ -308,7 +314,7 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         skipForward.setEnabled(b);
         play.setEnabled(b);
         velocity.setEnabled(b);
-        triangulate.setEnabled(b);
+        //triangulate.setEnabled(b);
     }
 
     private void initDrawPanel() {
@@ -391,6 +397,11 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
     public void actionPerformed(ActionEvent e) {
         boolean pausing = isPaused;
         isPaused = true; // stop flow
+        if (e.getSource() == aboutBtn) {
+        	openAbout();
+        	return;
+        }
+        
         if (polygonSet) {
             if (e.getSource() == stepBack) {
                 stepBackClicked();
@@ -407,9 +418,10 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             } else if (e.getSource() == play) {
                 isPaused = pausing;
                 playClicked();
-            } else if (e.getSource() == triangulate) {
-                triangulate();
             }
+//          } else if (e.getSource() == triangulate) {
+//                triangulate();
+//          }
         }
         if (e.getSource() == editBtn) {
             editBtnClicked();
@@ -420,44 +432,45 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         }
     }
 
-    public void triangulate() {
 
-        LinkedList<Point2D> points = praeComputer.getSamplePolygon();
-
-        Polygon poly = new Polygon();
-        for (Point2D p : points) {
-            poly.addPoint((int) p.getX(), (int) p.getY());
-        }
-        //initAlgorithm(poly);
-
-        double currXMin = points.get(0).getX();
-        for (Point2D p : points) {
-            if (currXMin >= p.getX())
-                currXMin = p.getX();
-        }
-        for (int i = 0; i < points.size(); i++) {
-            points.set(i, new Point2D.Double(points.get(i).getX() - currXMin, points.get(i).getY()));
-        }
-        triangulatePanel = new JPanel();
-        triangulatePanel = Main.getTriangulationViewerOf(points);
-        triangulatePanel.setBounds(10, 10, 768, 400);
-        triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        triangulatePanel.setPreferredSize(new Dimension(768, 400));
-
-        JFrame triaFrame = new JFrame("Triangulator");
-        triaFrame.setBounds(100, 100, 1024, 550);
-        triaFrame.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weighty = 1.0;
-        c.weightx = 1.0;
-        triaFrame.add(triangulatePanel, c);
-        triangulatePanel.repaint();
-        triaFrame.repaint();
-        triaFrame.setVisible(true);
-    }
+//	public void triangulate() {
+//
+//        LinkedList<Point2D> points = praeComputer.getSamplePolygon();
+//
+//        Polygon poly = new Polygon();
+//        for (Point2D p : points) {
+//            poly.addPoint((int) p.getX(), (int) p.getY());
+//        }
+//        //initAlgorithm(poly);
+//
+//        double currXMin = points.get(0).getX();
+//        for (Point2D p : points) {
+//            if (currXMin >= p.getX())
+//                currXMin = p.getX();
+//        }
+//        for (int i = 0; i < points.size(); i++) {
+//            points.set(i, new Point2D.Double(points.get(i).getX() - currXMin, points.get(i).getY()));
+//        }
+//        triangulatePanel = new JPanel();
+//        triangulatePanel = Main.getTriangulationViewerOf(points);
+//        triangulatePanel.setBounds(10, 10, 768, 400);
+//        triangulatePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//        triangulatePanel.setPreferredSize(new Dimension(768, 400));
+//
+//        JFrame triaFrame = new JFrame("Triangulator");
+//        triaFrame.setBounds(100, 100, 1024, 550);
+//        triaFrame.setLayout(new GridBagLayout());
+//        GridBagConstraints c = new GridBagConstraints();
+//        c.fill = GridBagConstraints.BOTH;
+//        c.gridx = 0;
+//        c.gridy = 0;
+//        c.weighty = 1.0;
+//        c.weightx = 1.0;
+//        triaFrame.add(triangulatePanel, c);
+//        triangulatePanel.repaint();
+//        triaFrame.repaint();
+//        triaFrame.setVisible(true);
+//    }
 
     public void playClicked() {
         isPaused = !isPaused;
@@ -749,6 +762,12 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         sweepLine.repaint();
     }
 
+    private void resetDrawMode() {
+    	inDrawMode = false;
+        polygonDrawn = false;
+        sweepLine.removeMouseListener(this);
+    }
+    
     @Override
     public void mouseClicked(MouseEvent e) {
         if (inDrawMode) {
@@ -837,6 +856,8 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
             return;
         }
 
+        resetDrawMode();
+        
         // load file
         Polygon p;
 		try {
@@ -881,4 +902,44 @@ public class YMonotonePolygonGUI extends JFrame implements ActionListener, Mouse
         saveBtn.setEnabled(false);
     }
 
+    private void openAbout() {
+        EventQueue.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                JFrame frame = new JFrame("About the Y-Montone Polygon Algorithm Demonstrator");
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setBounds(130, 130, 600, 600);
+
+                
+                JEditorPane text = new JEditorPane();
+                text.setContentType("text/html");
+
+    String s =  "<html><h3>What is the purpose of this application?</h3><p>This is a little java application for the visualization of the algorithm for dividing a (simple) polygon "
+    + "into y-monotone ones by adding diagonals. It illustrates the algorithm of the book Computational Geometry by de Berg, Cheong, van Kreveld and Overmars, chapter 3 "
+    + "(ISBN: 978-3-540-77973-5).</p><p> So given a simple polygon, i.e. the edges do not intersect each other and we have just one border, "
+    + "we search for the y-monotone subpolygons. This means that functions for the left and the right border of the subpolygons are injectiv for the y-coordiante. "
+    + "The subpolygons get computet by adding diagonals when merge or split vertices occur.</p><h3>How do I use the application?</h3>"
+    + "<p> You can either load an example polygon or draw your own polygon for the algorithm. Press play and it will go along the sweep line events through the vertices of the polygon."
+    + " Thereby every line of the code for every vertex is handled solely.</p><h3>Who created this application and why?</h3>"
+    + "<p>The application is the outcome of a little students project in the lecture 'Algorithmische Geometrie', which was hold by Martin N&oumlllenburg and Benjamin Niedermann from "
+    + "the Institute of Theoretical Informatics at the Karlsruhe Institute for Technology (KIT) in summer semester 2014.<br> The authors are Lea K&oumlckert and Jonathan Klawitter.</p>"
+    + "<h3>How about licences?</h3><p>The application stands under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Lizenz."
+    + " You may find the code at https://github.com/joklawitter/yMonotonePolygon.</p>";
+        			
+    			text.setText(s);
+                
+                JScrollPane jsp = new JScrollPane(text);
+                jsp.setPreferredSize(new Dimension(600, 600));
+                
+                frame.setLayout(new BorderLayout());
+                frame.add(jsp, BorderLayout.CENTER);
+                frame.setVisible(true);
+                frame.setResizable(false);
+            }
+        });
+	}
+
+    
 }

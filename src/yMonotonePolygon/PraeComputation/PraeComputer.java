@@ -2,7 +2,7 @@ package yMonotonePolygon.PraeComputation;
 
 import java.awt.Color;
 import java.awt.Polygon;
-import java.awt.geom.Point2D;
+//import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -118,7 +118,7 @@ public class PraeComputer {
 		assert (handledVertices == vertices.size());
 		
 
-		computeYMonotoneSamplePolygon();
+//		computeYMonotoneSamplePolygon();
 		
 		return true;
 	}
@@ -450,183 +450,183 @@ public class PraeComputer {
 		return s;
 	}
 	
-	private LinkedList<Point2D> yMontoneSamplePolygon;
-	
-	public LinkedList<Point2D> getSamplePolygon() {
-		return yMontoneSamplePolygon;
-	}
-	
-	private void computeYMonotoneSamplePolygon() {
-		System.out.println("Computing sample polygon.");
-		Vertex start = findBottomMostVertex();
-		System.out.println("new start: " + start.toShortString());
-		LinkedList<Point2D> points = new LinkedList<Point2D>();
-		points.add(start.getPoint2D());
-		
-		Edge left;
-		Vertex curLeft;
-		if (start.hasDiagonals()) {
-			left = findUpwardMostRightDiag(start);
-			curLeft = (left.getEndVertex() == start) ? left.getStartVertex() : left.getEndVertex();
-		} else {
-			left = start.getPrevEdge();
-			curLeft = left.getStartVertex();
-		}
-		System.out.println("new Left: " + curLeft.toShortString());
-		points.add(0, curLeft.getPoint2D()); // add left to beginning of list
-
-		Edge right = start.getNextEdge();
-		Vertex curRight = right.getEndVertex();
-		System.out.println("new Right: " + curRight.toShortString());
-		points.add(curRight.getPoint2D()); // add to end of list
-
-		boolean reachedLeftTop = false;
-		boolean reachedRightTop = false;
-		int round = 0;
-		while (curRight != curLeft && round < 20) { 
-			System.out.println("New Round.");
-			round++;
-			
-			// go either left or right up
-			if (Geometry.isLowerThan(curLeft, curRight)) {
-				if (!reachedLeftTop) {
-					// till reached end
-					Edge leftNext = null;
-					if (curLeft.hasDiagonals()) { // look if we have to go over diagonal on left side
-						leftNext = findUpwardMostRightDiag(curLeft);
-						if (leftNext != null) {
-							curLeft = (leftNext.getEndVertex() == curLeft) ? leftNext.getStartVertex() : leftNext.getEndVertex();
-							left = leftNext;
-							System.out.println("new Left: " + curLeft.toShortString());
-							points.add(0, curLeft.getPoint2D()); // add left to beginning of list
-						}
-					}
-					if (leftNext == null) {
-						if (Geometry.isLowerThan(curLeft, curLeft.getPrevEdge().getStartVertex())) {
-							left = curLeft.getPrevEdge();
-							curLeft = left.getStartVertex();
-							System.out.println("new Left: " + curLeft.toShortString());
-							points.add(0, curLeft.getPoint2D()); // add left to beginning of list
-						} else {
-							System.out.println("reached left top");
-							reachedLeftTop = true;					
-						}
-					}
-					
-				}	
-			} else {
-				if (!reachedRightTop) {
-					// till reached end
-					Edge rightNext = null;
-					if (curRight.hasDiagonals()) { // look if we have to go over diagonal on left side
-						rightNext = findUpwardMostLeftDiag(curRight);
-						if (rightNext != null) {
-							curRight = (rightNext.getEndVertex() == curRight) ? rightNext.getStartVertex() : rightNext.getEndVertex();
-							System.out.println("new Right: " + curRight.toShortString());
-							points.add(curRight.getPoint2D()); // add to end of list
-						}
-					}
-					if (rightNext == null) {
-						if (Geometry.isLowerThan(curRight, curRight.getNextEdge().getEndVertex())) {
-							right = curRight.getNextEdge();
-							curRight = right.getEndVertex();
-							System.out.println("new Right: " + curRight.toShortString());
-							points.add(curRight.getPoint2D()); // add to end of list
-						} else {
-							System.out.println("reached right top");
-							reachedRightTop = true;					
-						}
-					}
-					
-				}
-			}		
-		}	
-
-		points.removeLast(); // last left and last right were the same
-		
-		yMontoneSamplePolygon = points;
-		System.out.println("Computet polygon: ");
-		for (Point2D p : points) {
-			System.out.print(p + ", ");
-		}
-	}
-
-	private Edge findUpwardMostLeftDiag(Vertex lower) {
-		Vertex upper = null;
-		Edge curDiag = null;
-		Vertex other = null;
-		for (Edge e : lower.getDiagonals()) {
-			if ((e.getStartVertex() != lower) && (!Geometry.isLowerThan(e.getStartVertex(), lower))) {
-				other = e.getStartVertex();
-			} else if ((e.getEndVertex() != lower) && (!Geometry.isLowerThan(e.getEndVertex(), lower))){
-				other = e.getEndVertex();
-			} else {
-				continue;
-			}
-			
-			if (upper == null) {
-				upper = other;
-				curDiag = e;
-			} else if (!Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
-				upper = other;
-				curDiag = e;
-			}
-		}
-		
-		if (upper == null) {
-			return lower.getNextEdge();
-		}
-		
-		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
-				&& (!Geometry.liesLeftOfLine(lower.getNextEdge(), upper))) {
-			curDiag = lower.getNextEdge();
-		}
-		
-		return curDiag;
-	}
-
-	private Edge findUpwardMostRightDiag(Vertex lower) {
-		Vertex upper = null;
-		Edge curDiag = null;
-		Vertex other = null;
-		for (Edge e : lower.getDiagonals()) {
-			if ((e.getStartVertex() != lower) && (!Geometry.isLowerThan(e.getStartVertex(), lower))) {
-				other = e.getStartVertex();
-			} else if ((e.getEndVertex() != lower) && (!Geometry.isLowerThan(e.getEndVertex(), lower))){
-				other = e.getEndVertex();
-			} else {
-				continue;
-			}
-			
-			if (upper == null) {
-				upper = other;
-				curDiag = e;
-			} else if (Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
-				upper = other;
-				curDiag = e;
-			}
-		}
-		
-		if (upper == null) {
-			return lower.getPrevEdge();
-		}
-		
-		if ((Geometry.isLowerThan(lower, lower.getPrevEdge().getEndVertex())) 
-				&& (Geometry.liesLeftOfLine(lower.getPrevEdge(), upper))) {
-			curDiag = lower.getPrevEdge();
-		}
-		
-		return curDiag;
-	}
-
-	private Vertex findBottomMostVertex() {
-		Vertex bottom = vertices.first();
-		for (Vertex v : vertices) {
-			if (Geometry.isLowerThan(v, bottom)) {
-				bottom = v;
-			}
-		}
-		
-		return bottom;
-	}
+//	private LinkedList<Point2D> yMontoneSamplePolygon;
+//	
+//	public LinkedList<Point2D> getSamplePolygon() {
+//		return yMontoneSamplePolygon;
+//	}
+//	
+//	private void computeYMonotoneSamplePolygon() {
+//		System.out.println("Computing sample polygon.");
+//		Vertex start = findBottomMostVertex();
+//		System.out.println("new start: " + start.toShortString());
+//		LinkedList<Point2D> points = new LinkedList<Point2D>();
+//		points.add(start.getPoint2D());
+//		
+//		Edge left;
+//		Vertex curLeft;
+//		if (start.hasDiagonals()) {
+//			left = findUpwardMostRightDiag(start);
+//			curLeft = (left.getEndVertex() == start) ? left.getStartVertex() : left.getEndVertex();
+//		} else {
+//			left = start.getPrevEdge();
+//			curLeft = left.getStartVertex();
+//		}
+//		System.out.println("new Left: " + curLeft.toShortString());
+//		points.add(0, curLeft.getPoint2D()); // add left to beginning of list
+//
+//		Edge right = start.getNextEdge();
+//		Vertex curRight = right.getEndVertex();
+//		System.out.println("new Right: " + curRight.toShortString());
+//		points.add(curRight.getPoint2D()); // add to end of list
+//
+//		boolean reachedLeftTop = false;
+//		boolean reachedRightTop = false;
+//		int round = 0;
+//		while (curRight != curLeft && round < 20) { 
+//			System.out.println("New Round.");
+//			round++;
+//			
+//			// go either left or right up
+//			if (Geometry.isLowerThan(curLeft, curRight)) {
+//				if (!reachedLeftTop) {
+//					// till reached end
+//					Edge leftNext = null;
+//					if (curLeft.hasDiagonals()) { // look if we have to go over diagonal on left side
+//						leftNext = findUpwardMostRightDiag(curLeft);
+//						if (leftNext != null) {
+//							curLeft = (leftNext.getEndVertex() == curLeft) ? leftNext.getStartVertex() : leftNext.getEndVertex();
+//							left = leftNext;
+//							System.out.println("new Left: " + curLeft.toShortString());
+//							points.add(0, curLeft.getPoint2D()); // add left to beginning of list
+//						}
+//					}
+//					if (leftNext == null) {
+//						if (Geometry.isLowerThan(curLeft, curLeft.getPrevEdge().getStartVertex())) {
+//							left = curLeft.getPrevEdge();
+//							curLeft = left.getStartVertex();
+//							System.out.println("new Left: " + curLeft.toShortString());
+//							points.add(0, curLeft.getPoint2D()); // add left to beginning of list
+//						} else {
+//							System.out.println("reached left top");
+//							reachedLeftTop = true;					
+//						}
+//					}
+//					
+//				}	
+//			} else {
+//				if (!reachedRightTop) {
+//					// till reached end
+//					Edge rightNext = null;
+//					if (curRight.hasDiagonals()) { // look if we have to go over diagonal on left side
+//						rightNext = findUpwardMostLeftDiag(curRight);
+//						if (rightNext != null) {
+//							curRight = (rightNext.getEndVertex() == curRight) ? rightNext.getStartVertex() : rightNext.getEndVertex();
+//							System.out.println("new Right: " + curRight.toShortString());
+//							points.add(curRight.getPoint2D()); // add to end of list
+//						}
+//					}
+//					if (rightNext == null) {
+//						if (Geometry.isLowerThan(curRight, curRight.getNextEdge().getEndVertex())) {
+//							right = curRight.getNextEdge();
+//							curRight = right.getEndVertex();
+//							System.out.println("new Right: " + curRight.toShortString());
+//							points.add(curRight.getPoint2D()); // add to end of list
+//						} else {
+//							System.out.println("reached right top");
+//							reachedRightTop = true;					
+//						}
+//					}
+//					
+//				}
+//			}		
+//		}	
+//
+//		points.removeLast(); // last left and last right were the same
+//		
+//		yMontoneSamplePolygon = points;
+//		System.out.println("Computet polygon: ");
+//		for (Point2D p : points) {
+//			System.out.print(p + ", ");
+//		}
+//	}
+//
+//	private Edge findUpwardMostLeftDiag(Vertex lower) {
+//		Vertex upper = null;
+//		Edge curDiag = null;
+//		Vertex other = null;
+//		for (Edge e : lower.getDiagonals()) {
+//			if ((e.getStartVertex() != lower) && (!Geometry.isLowerThan(e.getStartVertex(), lower))) {
+//				other = e.getStartVertex();
+//			} else if ((e.getEndVertex() != lower) && (!Geometry.isLowerThan(e.getEndVertex(), lower))){
+//				other = e.getEndVertex();
+//			} else {
+//				continue;
+//			}
+//			
+//			if (upper == null) {
+//				upper = other;
+//				curDiag = e;
+//			} else if (!Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
+//				upper = other;
+//				curDiag = e;
+//			}
+//		}
+//		
+//		if (upper == null) {
+//			return lower.getNextEdge();
+//		}
+//		
+//		if ((Geometry.isLowerThan(lower, lower.getNextEdge().getEndVertex())) 
+//				&& (!Geometry.liesLeftOfLine(lower.getNextEdge(), upper))) {
+//			curDiag = lower.getNextEdge();
+//		}
+//		
+//		return curDiag;
+//	}
+//
+//	private Edge findUpwardMostRightDiag(Vertex lower) {
+//		Vertex upper = null;
+//		Edge curDiag = null;
+//		Vertex other = null;
+//		for (Edge e : lower.getDiagonals()) {
+//			if ((e.getStartVertex() != lower) && (!Geometry.isLowerThan(e.getStartVertex(), lower))) {
+//				other = e.getStartVertex();
+//			} else if ((e.getEndVertex() != lower) && (!Geometry.isLowerThan(e.getEndVertex(), lower))){
+//				other = e.getEndVertex();
+//			} else {
+//				continue;
+//			}
+//			
+//			if (upper == null) {
+//				upper = other;
+//				curDiag = e;
+//			} else if (Geometry.liesLeftOfLine(new Edge(lower, other), other)) {
+//				upper = other;
+//				curDiag = e;
+//			}
+//		}
+//		
+//		if (upper == null) {
+//			return lower.getPrevEdge();
+//		}
+//		
+//		if ((Geometry.isLowerThan(lower, lower.getPrevEdge().getEndVertex())) 
+//				&& (Geometry.liesLeftOfLine(lower.getPrevEdge(), upper))) {
+//			curDiag = lower.getPrevEdge();
+//		}
+//		
+//		return curDiag;
+//	}
+//
+//	private Vertex findBottomMostVertex() {
+//		Vertex bottom = vertices.first();
+//		for (Vertex v : vertices) {
+//			if (Geometry.isLowerThan(v, bottom)) {
+//				bottom = v;
+//			}
+//		}
+//		
+//		return bottom;
+//	}
 }
